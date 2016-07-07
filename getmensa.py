@@ -2,24 +2,37 @@
 """Fetch and display canteen plans."""
 import re
 import requests
+import sys
 
 CANTEENS = [
     ('Philturm',
-     'http://speiseplan.studierendenwerk-hamburg.de/de/350/2016/0/'),
+     'http://speiseplan.studierendenwerk-hamburg.de/de/350/2016/{}/'),
     ('Studhaus',
-     'http://speiseplan.studierendenwerk-hamburg.de/de/310/2016/0/'),
+     'http://speiseplan.studierendenwerk-hamburg.de/de/310/2016/{}/'),
     ('Stellingen',
-     'http://speiseplan.studierendenwerk-hamburg.de/de/580/2016/0/'),
+     'http://speiseplan.studierendenwerk-hamburg.de/de/580/2016/{}/'),
     ('Campus',
-     'http://speiseplan.studierendenwerk-hamburg.de/de/340/2016/0/'),
+     'http://speiseplan.studierendenwerk-hamburg.de/de/340/2016/{}/'),
 ]
 
 
 def main():
     """Main routine."""
+    day = '0'
+    if len(sys.argv) >= 2:
+        if sys.argv[1] in ['0', '99']:
+            day = sys.argv[1]
+    if day == '0':
+        print('Heute')
+        print('=' * 30)
+        print('')
+    elif day == '99':
+        print('Morgen')
+        print('=' * 30)
+        print('')
     for canteen in CANTEENS:
         print('V     €  {}'.format(canteen[0]))
-        fetch_plan(canteen[1])
+        fetch_plan(canteen[1].format(day))
         print('\n')
 
 
