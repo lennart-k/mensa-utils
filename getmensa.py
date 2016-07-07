@@ -10,13 +10,15 @@ CANTEENS = [
      'http://speiseplan.studierendenwerk-hamburg.de/de/310/2016/0/'),
     ('Stellingen',
      'http://speiseplan.studierendenwerk-hamburg.de/de/580/2016/0/'),
+    ('Campus',
+     'http://speiseplan.studierendenwerk-hamburg.de/de/340/2016/0/'),
 ]
 
 
 def main():
     """Main routine."""
     for canteen in CANTEENS:
-        print('V  {}'.format(canteen[0]))
+        print('V     €  {}'.format(canteen[0]))
         fetch_plan(canteen[1])
         print('\n')
 
@@ -49,7 +51,11 @@ def fetch_plan(url):
         replaced = remove_nested_brackets(replaced)
         for pattern in patterns:
             replaced = pattern[0].sub(pattern[1], replaced)
-        print('{}   {}'.format(vegetarian, replaced))
+        price_regex = re.compile(r'(\d+),(\d+)')
+        price_match = price_regex.search(food[1])
+        price = '{:2d},{:2d}'.format(
+            int(price_match.group(1)), int(price_match.group(2)))
+        print('{} {}  {}'.format(vegetarian, price, replaced))
 
 
 def remove_nested_brackets(string):
