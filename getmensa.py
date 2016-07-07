@@ -5,19 +5,20 @@ import requests
 
 CANTEENS = [
     ('Philturm',
-        'http://speiseplan.studierendenwerk-hamburg.de/de/350/2016/0/'),
+     'http://speiseplan.studierendenwerk-hamburg.de/de/350/2016/0/'),
     ('Studhaus',
-        'http://speiseplan.studierendenwerk-hamburg.de/de/310/2016/0/'),
+     'http://speiseplan.studierendenwerk-hamburg.de/de/310/2016/0/'),
     ('Stellingen',
-        'http://speiseplan.studierendenwerk-hamburg.de/de/580/2016/0/'),
+     'http://speiseplan.studierendenwerk-hamburg.de/de/580/2016/0/'),
 ]
 
 
 def main():
     """Main routine."""
     for canteen in CANTEENS:
-        print(canteen[0])
+        print('V  {}'.format(canteen[0]))
         fetch_plan(canteen[1])
+        print('\n')
 
 
 def fetch_plan(url):
@@ -41,11 +42,14 @@ def fetch_plan(url):
     ]
 
     for food in foods:
+        vegetarian = ' '
+        if re.search(r'Vegetarisch|Vegan', food[0]):
+            vegetarian = 'x'
         replaced = food[0]
         replaced = remove_nested_brackets(replaced)
         for pattern in patterns:
             replaced = pattern[0].sub(pattern[1], replaced)
-        print('  {}'.format(replaced))
+        print('{}   {}'.format(vegetarian, replaced))
 
 
 def remove_nested_brackets(string):
