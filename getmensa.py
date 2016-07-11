@@ -5,10 +5,10 @@ import requests
 import sys
 
 CANTEENS = [
-    ('Philturm',
-     'http://speiseplan.studierendenwerk-hamburg.de/de/350/2016/{}/'),
     ('Studhaus',
      'http://speiseplan.studierendenwerk-hamburg.de/de/310/2016/{}/'),
+    ('Philturm',
+     'http://speiseplan.studierendenwerk-hamburg.de/de/350/2016/{}/'),
     ('Stellingen',
      'http://speiseplan.studierendenwerk-hamburg.de/de/580/2016/{}/'),
     ('Campus',
@@ -58,7 +58,7 @@ def fetch_plan(url):
 
     for food in foods:
         vegetarian = ' '
-        if re.search(r'Vegetarisch|Vegan', food[0]):
+        if re.search(r'Vegetarisch|Vegan', food[0], re.IGNORECASE):
             vegetarian = 'x'
         replaced = food[0]
         replaced = remove_nested_brackets(replaced)
@@ -66,7 +66,7 @@ def fetch_plan(url):
             replaced = pattern[0].sub(pattern[1], replaced)
         price_regex = re.compile(r'(\d+),(\d+)')
         price_match = price_regex.search(food[1])
-        price = '{:2d},{:2d}'.format(
+        price = '{:2d},{:02d}'.format(
             int(price_match.group(1)), int(price_match.group(2)))
         print('{} {}  {}'.format(vegetarian, price, replaced))
 
