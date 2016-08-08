@@ -1,6 +1,5 @@
 #!/bin/bash
 
-i="0"
 i=$(./stine.py getexams | wc -l)
 while true
 do
