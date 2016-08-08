@@ -2,9 +2,12 @@
 """Some stine pseudo-api tools."""
 from argparse import ArgumentParser
 from getpass import getpass
+import html
+import os
 import pickle
 import re
 import requests
+import sys
 
 
 STINE_BASE_URL = 'https://www.stine.uni-hamburg.de'
@@ -19,7 +22,6 @@ def start_session(arguments):
     # get stine home page (for required cookies)
     home_page = session.get(STINE_BASE_URL)
     home_page.encoding = 'UTF-16LE'
-
     # search for main link for german language
     pattern = re.compile(r'href="([^"]*)">de<')
     match = pattern.search(home_page.text)
@@ -59,12 +61,34 @@ def start_session(arguments):
     home_page = session.get(STINE_BASE_URL + refresh_url)
     home_page = _follow_stine_redirection_link(session, home_page)
 
-    with open(arguments.session_file, 'wb') as session_file:
-        pickle.dump({
-            'session': session,
-            'home_url': login_result.url,
-        }, session_file)
+    _store_session(arguments.session_file, session, home_page.url)
     print('Session successfully initiated.')
+
+
+def get_exams(arguments):
+    """Get an overview of the exams."""
+    session = _load_session(arguments.session_file)
+    home_url = session['home_url']
+    session = session['session']
+
+    # load home page to find "Studium" link
+    home_page = session.get(home_url)
+    pattern = re.compile(r'href="([^"]*)"[^>]*>Studium<')
+    match = pattern.search(home_page.text)
+    if not match:
+        print('Invalid stine home page.')
+
+    # get "Studium" page and find results link
+    study_page = session.get(STINE_BASE_URL + html.unescape(match.group(1)))
+    pattern = re.compile(r'href="([^"]*)"[^>]*>Pr&uuml;fungsergebnisse<')
+    match = pattern.search(study_page.text)
+    if not match:
+        print('Invalid stine home page.')
+    link = html.unescape(match.group(1))
+
+    # get results page
+    results_page = session.get(STINE_BASE_URL + link)
+    print(results_page.text)
 
 
 def _follow_stine_redirection_link(session, response):
@@ -77,6 +101,28 @@ def _follow_stine_redirection_link(session, response):
     response = session.get(STINE_BASE_URL + match.group(1))
     response.encoding = 'utf-8'
     return response
+
+
+def _store_session(session_file, session, home_url):
+    """Load the session from a pickled session file."""
+    with open(session_file, 'wb') as session_file:
+        pickle.dump({
+            'session': session,
+            'home_url': home_url,
+        }, session_file)
+
+
+def _load_session(session_file):
+    """Load the session from a pickled session file."""
+    if not os.path.isfile(session_file):
+        print('invalid session file path.')
+        sys.exit(1)
+    try:
+        with open(session_file, 'rb') as session_file:
+            return pickle.load(session_file)
+    except (TypeError, pickle.UnpicklingError):
+        print('invalid session file path.')
+        sys.exit(1)
 
 
 if __name__ == '__main__':
@@ -97,3 +143,5 @@ if __name__ == '__main__':
     arguments = parser.parse_args()
     if arguments.subcommand == 'startsession':
         start_session(arguments)
+    elif arguments.subcommand == 'getexams':
+        get_exams(arguments)
