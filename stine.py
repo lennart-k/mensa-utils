@@ -58,7 +58,6 @@ def start_session(arguments):
     refresh_url = login_result.headers['REFRESH'][7:]
     home_page = session.get(STINE_BASE_URL + refresh_url)
     home_page = _follow_stine_redirection_link(session, home_page)
-    print(home_page.url)
 
     with open(arguments.session_file, 'wb') as session_file:
         pickle.dump({
