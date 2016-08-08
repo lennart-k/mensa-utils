@@ -88,7 +88,17 @@ def get_exams(arguments):
 
     # get results page
     results_page = session.get(STINE_BASE_URL + link)
-    print(results_page.text)
+    results_page.encoding = 'utf-8'
+
+    # get exams
+    pattern = re.compile(r'<tr class="tbdata">.*?</tr>', re.DOTALL)
+    exams = pattern.findall(results_page.text)
+    exam_pattern = re.compile(
+        r'<td>\s*.*?&nbsp;.*?&nbsp;(.*?)<br />.*?\s*</td>.*?(\d,\d)',
+        re.DOTALL)
+    for exam in exams:
+        exam = exam_pattern.findall(exam)
+        print('{} - {}'.format(exam[0][1], exam[0][0]))
 
 
 def _follow_stine_redirection_link(session, response):
