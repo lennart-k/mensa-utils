@@ -11,7 +11,7 @@ do
   else
     echo AAAAHHH!!! Panik!
   fi
-  i=new
+  i=$new
 
   sleep 2m
 done
