@@ -1,8 +1,10 @@
 #!/bin/bash
 
+./stine.py getexam
 i=$(./stine.py getexams | wc -l)
 while true
 do
+  
   new=$(./stine.py getexams | wc -l)
   
   if [ "$i" == "$new" ];
@@ -10,6 +12,7 @@ do
     echo nothing happened
   else
     echo AAAAHHH!!! Panik!
+    notify-send 'Panik!!!! AAAAHHHH!!!!'
   fi
   i=$new
 
