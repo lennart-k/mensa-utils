@@ -76,14 +76,16 @@ def get_exams(arguments):
     pattern = re.compile(r'href="([^"]*)"[^>]*>Studium<')
     match = pattern.search(home_page.text)
     if not match:
-        print('Invalid stine home page.')
+        print('Invalid stine home page. Maybe your session is expired.')
+        return
 
     # get "Studium" page and find results link
     study_page = session.get(STINE_BASE_URL + html.unescape(match.group(1)))
     pattern = re.compile(r'href="([^"]*)"[^>]*>Pr&uuml;fungsergebnisse<')
     match = pattern.search(study_page.text)
     if not match:
-        print('Invalid stine home page.')
+        print('Invalid stine home page. Maybe your session is expired.')
+        return
     link = html.unescape(match.group(1))
 
     # get results page
