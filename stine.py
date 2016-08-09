@@ -83,7 +83,11 @@ def get_exams(arguments):
     while True:
         newly_parsed_exams = _get_exams(arguments)
         if parsed_exams != newly_parsed_exams:
+            print('')
             print('a change has occured!')
+            print('')
+            print(newly_parsed_exams)
+            print('')
             if arguments.notification:
                 print('calling {}'.format(arguments.notification))
                 os.system(arguments.notification)
