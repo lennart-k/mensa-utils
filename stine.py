@@ -61,40 +61,31 @@ def start_session(arguments):
     home_page = session.get(STINE_BASE_URL + refresh_url)
     home_page = _follow_stine_redirection_link(session, home_page)
 
-    _store_session(arguments.session_file, session, home_page.url)
+    _store_session(arguments.session_file, {
+        'session': session,
+        'home_url': home_page.url,
+    })
     print('Session successfully initiated.')
 
 
 def get_exams(arguments):
     """Get an overview of the exams."""
-    session = _load_session(arguments.session_file)
-    home_url = session['home_url']
-    session = session['session']
+    session_data = _load_session(arguments.session_file)
+    home_url = session_data['home_url']
+    session = session_data['session']
 
-    # load home page to find "Studium" link
-    home_page = session.get(home_url)
-    pattern = re.compile(r'href="([^"]*)"[^>]*>Studium<')
-    match = pattern.search(home_page.text)
-    if not match:
-        print('Invalid stine home page. Maybe your session is expired.')
-        return
-
-    # get "Studium" page and find results link
-    study_page = session.get(STINE_BASE_URL + html.unescape(match.group(1)))
-    pattern = re.compile(r'href="([^"]*)"[^>]*>Pr&uuml;fungsergebnisse<')
-    match = pattern.search(study_page.text)
-    if not match:
-        print('Invalid stine home page. Maybe your session is expired.')
-        return
-    link = html.unescape(match.group(1))
+    if 'exams_url' not in session_data:
+        session_data['exams_url'] = _get_exams_page_link(session, home_url)
+        _store_session(arguments.session_file, session_data)
+    exams_page_link = session_data['exams_url']
 
     # get results page
-    results_page = session.get(STINE_BASE_URL + link)
-    results_page.encoding = 'utf-8'
+    exams_page = session.get(exams_page_link)
+    exams_page.encoding = 'utf-8'
 
     # get exams
     pattern = re.compile(r'<tr class="tbdata">.*?</tr>', re.DOTALL)
-    exams = pattern.findall(results_page.text)
+    exams = pattern.findall(exams_page.text)
     exam_pattern = re.compile(
         r'<td>\s*.*?&nbsp;.*?&nbsp;(.*?)<br />.*?\s*</td>.*?(\d,\d)',
         re.DOTALL)
@@ -115,13 +106,31 @@ def _follow_stine_redirection_link(session, response):
     return response
 
 
-def _store_session(session_file, session, home_url):
+def _get_exams_page_link(session, home_url):
+    """Get the link of the exams result page."""
+    # load home page to find "Studium" link
+    home_page = session.get(home_url)
+    pattern = re.compile(r'href="([^"]*)"[^>]*>Studium<')
+    match = pattern.search(home_page.text)
+    if not match:
+        print('Invalid stine home page. Maybe your session is expired.')
+        return
+
+    # get "Studium" page and find results link
+    study_page = session.get(STINE_BASE_URL + html.unescape(match.group(1)))
+    pattern = re.compile(r'href="([^"]*)"[^>]*>Pr&uuml;fungsergebnisse<')
+    match = pattern.search(study_page.text)
+    if not match:
+        print('Invalid stine home page. Maybe your session is expired.')
+        return
+    link = html.unescape(match.group(1))
+    return STINE_BASE_URL + link
+
+
+def _store_session(session_file, session_data):
     """Load the session from a pickled session file."""
     with open(session_file, 'wb') as session_file:
-        pickle.dump({
-            'session': session,
-            'home_url': home_url,
-        }, session_file)
+        pickle.dump(session_data, session_file)
 
 
 def _load_session(session_file):
