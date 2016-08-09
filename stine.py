@@ -2,6 +2,7 @@
 """Some stine pseudo-api tools."""
 from argparse import ArgumentParser
 from getpass import getpass
+from time import sleep
 import html
 import os
 import pickle
@@ -70,6 +71,30 @@ def start_session(arguments):
 
 def get_exams(arguments):
     """Get an overview of the exams."""
+    watch_interval = int(arguments.watch)
+
+    parsed_exams = _get_exams(arguments)
+    print(parsed_exams)
+
+    if watch_interval <= 0:
+        return
+
+    # watch
+    while True:
+        newly_parsed_exams = _get_exams(arguments)
+        if parsed_exams != newly_parsed_exams:
+            print('a change has occured!')
+            if arguments.notification:
+                print('calling {}'.format(arguments.notification))
+                os.system(arguments.notification)
+        else:
+            print('no change.')
+        parsed_exams = newly_parsed_exams
+        sleep(watch_interval * 60)
+
+
+def _get_exams(arguments):
+    """Load and parse the exam page."""
     session_data = _load_session(arguments.session_file)
     home_url = session_data['home_url']
     session = session_data['session']
@@ -89,9 +114,15 @@ def get_exams(arguments):
     exam_pattern = re.compile(
         r'<td>\s*.*?&nbsp;.*?&nbsp;(.*?)<br />.*?\s*</td>.*?(\d,\d)',
         re.DOTALL)
+    parsed_exams = ''
     for exam in exams:
         exam = exam_pattern.findall(exam)
-        print('{} - {}'.format(exam[0][1], exam[0][0]))
+        parsed_exams += '{} - {}\n'.format(exam[0][1], exam[0][0])
+
+    # remove last newline
+    parsed_exams = parsed_exams[:-1]
+
+    return parsed_exams
 
 
 def _follow_stine_redirection_link(session, response):
@@ -160,6 +191,14 @@ if __name__ == '__main__':
 
     parser_getexams = subparsers.add_parser(
         'getexams', help='Get current exam results.')
+    parser_getexams.add_argument(
+        '-w', '--watch', default='-1', type=int,
+        dest='watch', help='When greater than zero, the script runs '
+        'as daemon and checks for new exams every N minutes.')
+    parser_getexams.add_argument(
+        '-n', '--notify',
+        dest='notification', help='The specified command will be executed '
+        'when there has been a change.')
 
     arguments = parser.parse_args()
     if arguments.subcommand == 'startsession':
