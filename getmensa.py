@@ -2,38 +2,41 @@
 """Fetch and display canteen plans."""
 import re
 import requests
-import sys
+from collections import defaultdict
+from jinja2 import Template
 
 CANTEENS = [
-    ('Studhaus',
-     'http://speiseplan.studierendenwerk-hamburg.de/de/310/2016/{}/'),
-    ('Philturm',
-     'http://speiseplan.studierendenwerk-hamburg.de/de/350/2016/{}/'),
-    ('Stellingen',
-     'http://speiseplan.studierendenwerk-hamburg.de/de/580/2016/{}/'),
+    ('Bucerius Law School',
+        'http://speiseplan.studierendenwerk-hamburg.de/de/410/2016/{}/'),
+    ('Café CFEL',
+        'http://speiseplan.studierendenwerk-hamburg.de/de/680/2016/{}/'),
+    ('Café Jungiusstraße',
+        'http://speiseplan.studierendenwerk-hamburg.de/de/610/2016/{}/'),
     ('Campus',
-     'http://speiseplan.studierendenwerk-hamburg.de/de/340/2016/{}/'),
+        'http://speiseplan.studierendenwerk-hamburg.de/de/340/2016/{}/'),
+    ('Geomatikum',
+        'http://speiseplan.studierendenwerk-hamburg.de/de/540/2016/{}/'),
+    ('Philturm',
+        'http://speiseplan.studierendenwerk-hamburg.de/de/350/2016/{}/'),
+    ('Stellingen',
+        'http://speiseplan.studierendenwerk-hamburg.de/de/580/2016/{}/'),
+    ('Studhaus',
+        'http://speiseplan.studierendenwerk-hamburg.de/de/310/2016/{}/'),
 ]
 
 
 def main():
-    """Main routine."""
-    day = '0'
-    if len(sys.argv) >= 2:
-        if sys.argv[1] in ['0', '99']:
-            day = sys.argv[1]
-    if day == '0':
-        print('Heute')
-        print('=' * 30)
-        print('')
-    elif day == '99':
-        print('Morgen')
-        print('=' * 30)
-        print('')
-    for canteen in CANTEENS:
-        print('V     €  {}'.format(canteen[0]))
-        fetch_plan(canteen[1].format(day))
-        print('\n')
+    """Generate output."""
+    days = [0, 99]
+    mensa_data = defaultdict(list)
+    for day in days:
+        for canteen in CANTEENS:
+            mensa_data[day].append((canteen[0], fetch_plan(canteen[1].format(day))))
+
+    # pass output to jinja2
+    with open("mensa.html") as template_file:
+        template = Template(template_file.read())
+        print(template.render({'mensa_data': mensa_data}))
 
 
 def fetch_plan(url):
@@ -57,9 +60,9 @@ def fetch_plan(url):
     ]
 
     for food in foods:
-        vegetarian = ' '
+        vegetarian = False
         if re.search(r'Vegetarisch|Vegan', food[0], re.IGNORECASE):
-            vegetarian = 'x'
+            vegetarian = True
         replaced = food[0]
         replaced = remove_nested_brackets(replaced)
         for pattern in patterns:
@@ -68,7 +71,11 @@ def fetch_plan(url):
         price_match = price_regex.search(food[1])
         price = '{:2d},{:02d}'.format(
             int(price_match.group(1)), int(price_match.group(2)))
-        print('{} {}  {}'.format(vegetarian, price, replaced))
+        yield {
+            'vegetarian': vegetarian,
+            'price': price,
+            'title': replaced,
+        }
 
 
 def remove_nested_brackets(string):

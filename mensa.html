@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Heutiger Mensa-Speiseplan</title>
+  </head>
+  <body>
+    {% for day, canteens in mensa_data.items() %}
+      <h1>
+        {% if day == 0 %}
+          Heute
+        {% else %}
+          Nächster Öffnungstag
+        {% endif %}
+      </h1>
+      {% for canteen, entries in canteens %}
+        <h2>
+          {{ canteen }}
+        </h2>
+        <table style="width: 100%; max-width: 700px;">
+          <tr>
+            <th style="width: 10%;">
+              Veg.
+            </th>
+            <th style="width: 20%;">
+              Preis
+            </th>
+            <th style="width: 70%; text-align: left;">
+              Gericht
+            </th>
+          </tr>
+          {% for entry in entries %}
+            <tr>
+              <td style="text-align: center;">
+                {% if entry.vegetarian %}
+                  ja
+                {% else %}
+                  nein
+                {% endif %}
+              </td>
+              <td style="text-align: center;">
+                {{ entry.price }} €
+              </td>
+              <td style="text-align: left;">
+                {{ entry.title }}
+              </td>
+            </tr>
+          {% endfor %}
+        </table>
+      {% endfor %}
+    {% endfor %}
+  </body>
+</html>
