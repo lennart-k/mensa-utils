@@ -22,13 +22,13 @@
             {% endif %}
           </h2>
           {% for canteen, entries in canteens %}
-            <div id="canteen-{{ day }}-{{ forloop.counter }}" class="canteen canteen-{{ loop.index }}" data-canteennumber="{{ loop.index }}">
+            <div id="canteen-{{ day }}-{{ forloop.counter }}" class="canteen canteen-{{ forloop.counter }}" data-canteennumber="{{ forloop.counter }}">
               <h3>
                 {{ canteen }}
-                <a class="up-{{ loop.index }} move-link" href="javascript:moveCanteen(-1, {{ loop.index }});">
+                <a class="up-{{ forloop.counter }} move-link" href="javascript:moveCanteen(-1, {{ forloop.counter }});">
                   <span class="glyphicon glyphicon-arrow-up"></span>
                 </a>
-                <a class="down-{{ loop.index }} move-link" href="javascript:moveCanteen(1, {{ loop.index }});">
+                <a class="down-{{ forloop.counter }} move-link" href="javascript:moveCanteen(1, {{ forloop.counter }});">
                   <span class="glyphicon glyphicon-arrow-down"></span>
                 </a>
               </h3>

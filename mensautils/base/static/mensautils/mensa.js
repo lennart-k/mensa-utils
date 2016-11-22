@@ -82,7 +82,6 @@
 
     $.each(DAYS, function(key, day) {
       // Place all canteens starting by second behind its predecessor
-      console.log(canteenOrder);
       for (var i = 1; i < canteenOrder.length; i++) {
           var previousCanteen = $('#canteen-' + day + '-' + canteenOrder[i - 1]);
           var canteen = $('#canteen-' + day + '-' + canteenOrder[i]);
