@@ -124,9 +124,9 @@ STATIC_URL = '/static/'
 CANTEENS = [
     ('Bucerius Law School',
      'http://speiseplan.studierendenwerk-hamburg.de/de/410/{}/{}/'),
-    ('Cafe CFEL',
+    ('Café CFEL',
      'http://speiseplan.studierendenwerk-hamburg.de/de/680/{}/{}/'),
-    ('Cafe Jungiusstraße',
+    ('Café Jungiusstraße',
      'http://speiseplan.studierendenwerk-hamburg.de/de/610/{}/{}/'),
     ('Campus',
      'http://speiseplan.studierendenwerk-hamburg.de/de/340/{}/{}/'),
