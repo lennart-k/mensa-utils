@@ -2,6 +2,7 @@
 """Fetch and display canteen plans."""
 import re
 import requests
+from datetime import datetime
 from collections import defaultdict
 from jinja2 import Template
 
@@ -36,7 +37,10 @@ def main():
     # pass output to jinja2
     with open("mensa.html") as template_file:
         template = Template(template_file.read())
-        print(template.render({'mensa_data': mensa_data}))
+        print(template.render({
+            'mensa_data': mensa_data, 
+            'last_refresh': datetime.now(),
+        }))
 
 
 def fetch_plan(url):
