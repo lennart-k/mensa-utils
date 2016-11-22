@@ -20,6 +20,8 @@ class Serving(models.Model):
     date = models.DateField()
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=4, decimal_places=2)
 
     def __str__(self):
-        return '{}: {} ({})'.format(self.canteen, str(self.dish), str(self.date))
+        return '{}: {} ({}, {})'.format(self.canteen, str(self.dish), str(self.date),
+                                        self.price)
