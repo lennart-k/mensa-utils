@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Fetch and display canteen plans."""
 import re
+from datetime import datetime
+
 import requests
 from collections import defaultdict
 from django.conf import settings
@@ -8,13 +10,14 @@ from django.conf import settings
 
 def fetch_mensa() -> defaultdict:
     """Generate output."""
+    year = datetime.today().year
     days = [0, 99]
     mensa_data = defaultdict(list)
     for day in days:
         for canteen in settings.CANTEENS:
             mensa_data[day].append(
                 (canteen[0],
-                 fetch_plan(canteen[1].format(day))))
+                 fetch_plan(canteen[1].format(year, day))))
 
     return mensa_data
 
