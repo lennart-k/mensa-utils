@@ -44,7 +44,7 @@
     }
 
     canteenOrder = getCanteenOrder();
-    if (canteenOrder === undefined) {
+    if (canteenOrder === undefined || canteenOrder === null) {
       canteenOrder = getDOMCanteenOrder();
     }
 
@@ -75,12 +75,14 @@
     }
 
     var canteenOrder = getCanteenOrder();
-    if (canteenOrder === undefined) {
-      return false;  // don't do anything
+    if (canteenOrder === undefined || canteenOrder === null) {
+      hideUnnecessaryCanteenButtons(getDOMCanteenOrder());
+      return false;  // don't do anything (except for hiding unnecessary buttons)
     }
 
     $.each(DAYS, function(key, day) {
       // Place all canteens starting by second behind its predecessor
+      console.log(canteenOrder);
       for (var i = 1; i < canteenOrder.length; i++) {
           var previousCanteen = $('#canteen-' + day + '-' + canteenOrder[i - 1]);
           var canteen = $('#canteen-' + day + '-' + canteenOrder[i]);
@@ -88,6 +90,13 @@
       }
     });
 
+    hideUnnecessaryCanteenButtons(getCanteenOrder());
+  }
+
+  /**
+   * Hide up button of highest and down button of lowest canteens
+   */
+  function hideUnnecessaryCanteenButtons(canteenOrder) {
     $('.move-link').show();
     // hide first and last up/down buttons
     var first = canteenOrder[0];
