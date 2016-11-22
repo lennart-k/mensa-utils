@@ -2,45 +2,21 @@
 """Fetch and display canteen plans."""
 import re
 import requests
-from datetime import datetime
 from collections import defaultdict
-from jinja2 import Template
-
-CANTEENS = [
-    ('Bucerius Law School',
-        'http://speiseplan.studierendenwerk-hamburg.de/de/410/2016/{}/'),
-    ('Café CFEL',
-        'http://speiseplan.studierendenwerk-hamburg.de/de/680/2016/{}/'),
-    ('Café Jungiusstraße',
-        'http://speiseplan.studierendenwerk-hamburg.de/de/610/2016/{}/'),
-    ('Campus',
-        'http://speiseplan.studierendenwerk-hamburg.de/de/340/2016/{}/'),
-    ('Geomatikum',
-        'http://speiseplan.studierendenwerk-hamburg.de/de/540/2016/{}/'),
-    ('Philturm',
-        'http://speiseplan.studierendenwerk-hamburg.de/de/350/2016/{}/'),
-    ('Stellingen',
-        'http://speiseplan.studierendenwerk-hamburg.de/de/580/2016/{}/'),
-    ('Studhaus',
-        'http://speiseplan.studierendenwerk-hamburg.de/de/310/2016/{}/'),
-]
+from django.conf import settings
 
 
-def main():
+def fetch_mensa() -> defaultdict:
     """Generate output."""
     days = [0, 99]
     mensa_data = defaultdict(list)
     for day in days:
-        for canteen in CANTEENS:
-            mensa_data[day].append((canteen[0], fetch_plan(canteen[1].format(day))))
+        for canteen in settings.CANTEENS:
+            mensa_data[day].append(
+                (canteen[0],
+                 fetch_plan(canteen[1].format(day))))
 
-    # pass output to jinja2
-    with open("mensa.html") as template_file:
-        template = Template(template_file.read())
-        print(template.render({
-            'mensa_data': mensa_data, 
-            'last_refresh': datetime.now(),
-        }))
+    return mensa_data
 
 
 def fetch_plan(url):
@@ -102,4 +78,4 @@ def remove_nested_brackets(string):
     return new_string
 
 if __name__ == '__main__':
-    main()
+    print(fetch_mensa())

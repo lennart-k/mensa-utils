@@ -12,7 +12,7 @@
   <body>
     <h1>Mensa-Speisepläne der Uni Hamburg</h1>
     <div class="row">
-      {% for day, canteens in mensa_data.items() %}
+      {% for day, canteens in mensa_data %}
         <div class="col-md-6">
           <h2>
             {% if day == 0 %}
@@ -22,7 +22,7 @@
             {% endif %}
           </h2>
           {% for canteen, entries in canteens %}
-            <div id="canteen-{{ day }}-{{ loop.index }}" class="canteen canteen-{{ loop.index }}" data-canteennumber="{{ loop.index }}">
+            <div id="canteen-{{ day }}-{{ forloop.counter }}" class="canteen canteen-{{ loop.index }}" data-canteennumber="{{ loop.index }}">
               <h3>
                 {{ canteen }}
                 <a class="up-{{ loop.index }} move-link" href="javascript:moveCanteen(-1, {{ loop.index }});">
