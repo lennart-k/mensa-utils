@@ -13,6 +13,6 @@ class Command(BaseCommand):
         rendered = render_to_string(
             'mensautils/mensa.html', {
                 'mensa_data': fetch_mensa().items(),
-                'last_fetch': timezone.now(),
+                'last_refresh': timezone.now(),
             })
         print(rendered)

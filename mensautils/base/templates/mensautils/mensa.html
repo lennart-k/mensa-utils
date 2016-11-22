@@ -12,7 +12,7 @@
   <body>
     <h1>Mensa-Speisepläne der Uni Hamburg</h1>
     <div class="row">
-      {% for day, canteens in mensa_data %}
+      {% for day, day_data in mensa_data %}
         <div class="col-md-6">
           <h2>
             {% if day == 0 %}
@@ -20,8 +20,9 @@
             {% else %}
               Nächster Öffnungstag
             {% endif %}
+            ({{ day_data.0|date:"j. F Y" }})
           </h2>
-          {% for canteen, entries in canteens %}
+          {% for canteen, entries in day_data.1 %}
             <div id="canteen-{{ day }}-{{ forloop.counter }}" class="canteen canteen-{{ forloop.counter }}" data-canteennumber="{{ forloop.counter }}">
               <h3>
                 {{ canteen }}
@@ -66,7 +67,7 @@
     </div>
 
     <p>
-      Letzte Aktualisierung: {{ last_refresh }}
+      Letzte Aktualisierung: {{ last_refresh|date:"j. F Y H:i:s" }}
     <p>
     <p>
       Powered by <a href="https://gogs.mafiasi.de/mafiasi/mensa-utils">mensa-utils</a>.<br />
