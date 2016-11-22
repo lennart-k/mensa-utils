@@ -7,19 +7,20 @@
 
     <link rel="stylesheet" href="./bootstrap.min.css">
 
-    <title>Mensa-Speiseplan</title>
+    <title>Mensa-Speisepläne der Uni Hamburg</title>
   </head>
   <body>
+    <h1>Mensa-Speisepläne der Uni Hamburg</h1>
     <div class="row">
       {% for day, canteens in mensa_data.items() %}
         <div class="col-md-6">
-          <h1>
+          <h2>
             {% if day == 0 %}
               Heute
             {% else %}
               Nächster Öffnungstag
             {% endif %}
-          </h1>
+          </h2>
           {% for canteen, entries in canteens %}
             <h3>
               {{ canteen }}
