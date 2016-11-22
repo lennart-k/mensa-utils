@@ -87,6 +87,13 @@
           canteen.insertAfter(previousCanteen);
       }
     });
+
+    $('.move-link').show();
+    // hide first and last up/down buttons
+    var first = canteenOrder[0];
+    var last = canteenOrder[canteenOrder.length - 1];
+    $('.up-' + first).hide();
+    $('.down-' + last).hide();
   }
 
   $(function(){

@@ -25,8 +25,8 @@
             <div id="canteen-{{ day }}-{{ loop.index }}" class="canteen canteen-{{ loop.index }}" data-canteennumber="{{ loop.index }}">
               <h3>
                 {{ canteen }}
-                <a class="move-link" href="javascript:moveCanteen(-1, {{ loop.index }});">Up</a>
-                <a class="move-link" href="javascript:moveCanteen(1, {{ loop.index }});">Down</a>
+                <a class="up-{{ loop.index }} move-link" href="javascript:moveCanteen(-1, {{ loop.index }});">Up</a>
+                <a class="down-{{ loop.index }} move-link" href="javascript:moveCanteen(1, {{ loop.index }});">Down</a>
               </h3>
               <table style="width: 95%; max-width: 700px;">
                 <tr>
