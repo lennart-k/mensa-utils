@@ -18,9 +18,10 @@ def fetch_mensa() -> dict:
     for day in days:
         mensa_data[day[0]] = day[1], []
         for canteen in settings.CANTEENS:
+            # generate list of generator to iterate multiple times
             mensa_data[day[0]][1].append(
                 (canteen[0],
-                 fetch_plan(canteen[1].format(year, day))))
+                 list(fetch_plan(canteen[1].format(year, day[0])))))
 
     return mensa_data
 
