@@ -1,0 +1,5 @@
+#!/bin/bash
+. .pyenv/bin/activate
+./mensa.py > ./mensa_temp.html
+cp ./mensa_temp.html /var/www/mensa.mafiasi.de/index.html
+rm mensa_temp.html
