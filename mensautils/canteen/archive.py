@@ -2,7 +2,7 @@ from datetime import datetime
 
 from decimal import Decimal
 
-from mensautils.base.models import Canteen, Dish, Serving
+from mensautils.canteen.models import Canteen, Dish, Serving
 
 
 def store_canteen_data(day: datetime.date, canteen_name: str, dishes: dict):

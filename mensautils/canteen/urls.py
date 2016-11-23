@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from mensautils.base import views
+from mensautils.canteen import views
 
 app_name = 'mensautils.base'
 urlpatterns = [

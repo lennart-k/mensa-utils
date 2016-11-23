@@ -4,8 +4,8 @@ from datetime import timedelta
 from django.conf import settings
 from django.core.management import BaseCommand
 
-from mensautils.base.archive import store_canteen_data
-from mensautils.base.canteen import fetch_canteen
+from mensautils.canteen.archive import store_canteen_data
+from mensautils.canteen.canteen import fetch_canteen
 
 
 class Command(BaseCommand):

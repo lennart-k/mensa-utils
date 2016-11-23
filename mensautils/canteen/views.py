@@ -6,8 +6,8 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 
-from mensautils.base.models import Canteen, Serving
-from mensautils.base.statistics import get_most_frequent_dishes
+from mensautils.canteen.models import Canteen, Serving
+from mensautils.canteen.statistics import get_most_frequent_dishes
 
 
 def index(request: HttpRequest) -> HttpResponse:

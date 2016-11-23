@@ -1,6 +1,6 @@
 from django.db.models import Count
 
-from mensautils.base.models import Dish
+from mensautils.canteen.models import Dish
 
 
 def get_most_frequent_dishes():
