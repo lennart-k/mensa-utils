@@ -145,3 +145,5 @@ CANTEENS = [
     ('Studhaus',
      'http://speiseplan.studierendenwerk-hamburg.de/de/310/{}/{}/'),
 ]
+
+FUZZY_MIN_RATIO = 67

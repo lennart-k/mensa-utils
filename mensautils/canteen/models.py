@@ -1,6 +1,8 @@
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+from fuzzywuzzy import fuzz
 
 
 class Dish(models.Model):
@@ -9,6 +11,13 @@ class Dish(models.Model):
 
     def __str__(self):
         return self.name
+
+    @staticmethod
+    def fuzzy_find_or_create(name: str, vegetarian: bool) -> 'Dish':
+        for dish in Dish.objects.filter(vegetarian=vegetarian):
+            if fuzz.partial_ratio(name, dish.name) >= settings.FUZZY_MIN_RATIO:
+                return dish
+        return Dish.objects.create(name=name, vegetarian=vegetarian)
 
 
 class Canteen(models.Model):
