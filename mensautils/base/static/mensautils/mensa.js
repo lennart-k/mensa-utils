@@ -17,6 +17,28 @@
   }
 
   /**
+   * Get hidden canteens.
+   */
+  function getHiddenCanteens() {
+    try {
+      var hiddenCanteens = JSON.parse(localStorage.getItem('hidden-canteens'));
+      if (Array.isArray(hiddenCanteens)) {
+        return hiddenCanteens;
+      }
+      return [];
+    } catch(e) {
+      return [];
+    }
+  }
+
+  /**
+   * Save canteen order to local storage
+   */
+  function saveHiddenCanteens(hiddenCanteens) {
+    localStorage.setItem('hidden-canteens', JSON.stringify(hiddenCanteens));
+  }
+
+  /**
    * Get canteen order from local storage
    */
   function getCanteenOrder() {
@@ -38,18 +60,18 @@
    * Move canteen
    */
   function moveCanteen(direction, canteenNumber) {
-    if (typeof(localStorage) === undefined) {
+    if (typeof(localStorage) === 'undefined') {
       // not supported in this browser
       return;
     }
 
-    canteenOrder = getCanteenOrder();
+    var canteenOrder = getCanteenOrder();
     if (canteenOrder === undefined || canteenOrder === null) {
       canteenOrder = getDOMCanteenOrder();
     }
 
-    canteenIndex = canteenOrder.indexOf(canteenNumber)
-    otherCanteenIndex = canteenIndex + direction;
+    var canteenIndex = canteenOrder.indexOf(canteenNumber);
+    var otherCanteenIndex = canteenIndex + direction;
 
     if (otherCanteenIndex < 0 || otherCanteenIndex >= canteenOrder.length) {
       // do not move. is already at top or bottom
@@ -66,10 +88,33 @@
   window.moveCanteen = moveCanteen;
 
   /**
+   * Hide a canteen.
+   *
+   * @param canteenNumber
+   */
+  function hideCanteen(canteenNumber) {
+    if (typeof(localStorage) === 'undefined') {
+      // not supported in this browser
+      return;
+    }
+
+    var hiddenCanteens = getHiddenCanteens();
+    if (hiddenCanteens.indexOf(canteenNumber) >= 0) {
+      // already hidden
+      return true;
+    }
+
+    hiddenCanteens.push(canteenNumber);
+    saveHiddenCanteens(hiddenCanteens);
+    hideHiddenCanteens();
+  }
+  window.hideCanteen = hideCanteen;
+
+  /**
    * Restore the canteen order
    */
   function restoreCanteenOrder() {
-    order = getCanteenOrder();
+    var order = getCanteenOrder();
     if (order === undefined) {
       return;  // nothing saved yet
     }
@@ -90,6 +135,7 @@
     });
 
     hideUnnecessaryCanteenButtons(getCanteenOrder());
+    hideHiddenCanteens();
   }
 
   /**
@@ -104,9 +150,19 @@
     $('.down-' + last).hide();
   }
 
+  /**
+   * hide hidden canteens.
+   */
+  function hideHiddenCanteens() {
+    var hiddenCanteens = getHiddenCanteens();
+    $.each(hiddenCanteens, function(key, canteenNumber) {
+      $('.canteen-' + canteenNumber).hide();
+    });
+  }
+
   $(function(){
     // hide move links if not supported
-    if (typeof(localStorage) === undefined) {
+    if (typeof(localStorage) === 'undefined') {
       $('.move-link').hide();
     }
 

@@ -1,11 +1,11 @@
-<!doctype html>
+{% load static %}<!doctype html>
 <html>
   <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'mensautils/css/bootstrap.min.css' %}">
 
     <title>Mensa-Speisepläne der Uni Hamburg</title>
   </head>
@@ -32,6 +32,9 @@
                   </a>
                   <a class="down-{{ forloop.counter }} move-link" href="javascript:moveCanteen(1, {{ forloop.counter }});">
                     <span class="glyphicon glyphicon-arrow-down"></span>
+                  </a>
+                  <a class="delete-{{ forloop.counter }} delete-link" href="javascript:hideCanteen({{ forloop.counter }});">
+                    <span class="glyphicon glyphicon-remove"></span>
                   </a>
                 </h3>
                 <table style="width: 100%; max-width: 700px;">
@@ -77,6 +80,6 @@
     </p>
   </body>
 
-  <script type="text/javascript" src="./jquery.js"></script>
-  <script type="text/javascript" src="./mensa.js"></script>
+  <script type="text/javascript" src="{% static 'mensautils/jquery.js' %}"></script>
+  <script type="text/javascript" src="{% static 'mensautils/mensa.js' %}"></script>
 </html>
