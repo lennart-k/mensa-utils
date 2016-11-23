@@ -115,6 +115,8 @@
     canteenOrder.splice(canteenOrder.indexOf(canteenNumber), 1);
     saveCanteenOrder(canteenOrder);
     hideUnnecessaryCanteenButtons(canteenOrder);
+
+    $('#showHiddenCanteensLink').show();
   }
   window.hideCanteen = hideCanteen;
 
@@ -136,6 +138,7 @@
     saveHiddenCanteens([]);
     restoreCanteenOrder();
     $('.canteen').show();
+    $('#showHiddenCanteensLink').hide();
   }
   window.showHiddenCanteens = showHiddenCanteens;
 
@@ -184,6 +187,9 @@
    */
   function hideHiddenCanteens() {
     var hiddenCanteens = getHiddenCanteens();
+    if (hiddenCanteens.length === 0) {
+      $('#showHiddenCanteensLink').hide();
+    }
     $.each(hiddenCanteens, function(key, canteenNumber) {
       $('.canteen-' + canteenNumber).hide();
     });
