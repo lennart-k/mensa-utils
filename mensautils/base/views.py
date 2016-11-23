@@ -1,11 +1,12 @@
 from datetime import date, timedelta
 
+from django.db.models import Max
 from django.http import HttpRequest
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 
-from mensautils.base.models import Canteen
+from mensautils.base.models import Canteen, Serving
 from mensautils.base.statistics import get_most_frequent_dishes
 
 
@@ -21,7 +22,8 @@ def index(request: HttpRequest) -> HttpResponse:
                 date=day)
     return render(request, 'mensautils/mensa.html', {
         'mensa_data': canteen_data,
-        # TODO: last refresh
+        'last_updated': Serving.objects.aggregate(
+            Max('last_updated'))['last_updated__max'],
     })
 
 
