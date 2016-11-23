@@ -45,7 +45,7 @@
     try {
       return JSON.parse(localStorage.getItem('canteen-order'));
     } catch(e) {
-      return;
+      return getDOMCanteenOrder();
     }
   }
 
@@ -117,6 +117,27 @@
     hideUnnecessaryCanteenButtons(canteenOrder);
   }
   window.hideCanteen = hideCanteen;
+
+  /**
+   * Show all hidden canteens again.
+   */
+  function showHiddenCanteens() {
+    if (typeof(localStorage) === 'undefined') {
+      // not supported in this browser
+      return;
+    }
+
+    var hiddenCanteens = getHiddenCanteens();
+    var canteenOrder = getCanteenOrder();
+    $.each(hiddenCanteens, function(key, canteenNumber) {
+      canteenOrder.push(canteenNumber);
+    });
+    saveCanteenOrder(canteenOrder);
+    saveHiddenCanteens([]);
+    restoreCanteenOrder();
+    $('.canteen').show();
+  }
+  window.showHiddenCanteens = showHiddenCanteens;
 
   /**
    * Restore the canteen order
