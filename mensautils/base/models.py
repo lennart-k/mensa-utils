@@ -19,8 +19,10 @@ class Canteen(models.Model):
 
 class Serving(models.Model):
     date = models.DateField()
-    dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
-    canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE)
+    dish = models.ForeignKey(
+        Dish, on_delete=models.CASCADE, related_name='servings')
+    canteen = models.ForeignKey(
+        Canteen, on_delete=models.CASCADE, related_name='servings')
     price = models.DecimalField(max_digits=4, decimal_places=2)
 
     def __str__(self):

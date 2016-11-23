@@ -1,0 +1,17 @@
+{% extends 'mensautils/base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="container" style="width: 98%;">
+    <h1>Statistiken - Mensa-Speisepläne der Uni Hamburg</h1>
+
+    <h2>Die am häufigsten servierten Gerichte</h2>
+    <ol>
+    {% for dish in most_frequent_dishes %}
+      <li>
+        {{ dish.name }} ({{ dish.servings__count }} mal serviert)
+      </li>
+    {% endfor %}
+    </ol>
+  </div>
+{% endblock content %}
