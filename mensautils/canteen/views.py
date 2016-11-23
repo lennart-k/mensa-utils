@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from datetime import date, timedelta
 
 from django.db.models import Max
@@ -14,7 +15,7 @@ def index(request: HttpRequest) -> HttpResponse:
     today = date.today()
     days = [today, today + timedelta(days=1)]
     canteens = Canteen.objects.order_by('name')
-    canteen_data = {}
+    canteen_data = OrderedDict()
     for day in days:
         canteen_data[day] = {}
         for canteen in canteens:
