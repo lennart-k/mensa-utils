@@ -69,7 +69,8 @@
 
   <p id="showHiddenCanteensLink"><a href="javascript:showHiddenCanteens();">Ausgeblendete Mensen wieder einblenden</a></p>
   <p>
-    Letzte Aktualisierung: {{ last_refresh|date:"j. F Y H:i:s" }}
+    Letzte Aktualisierung: {{ last_refresh|date:"j. F Y H:i:s" }}<br />
+    <a href="{% url 'mensautils.base:stats' %}">Statistiken</a>
   <p>
 {% endblock content %}
 
