@@ -1,0 +1,20 @@
+{% load static %}<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="{% static 'mensautils/css/bootstrap.min.css' %}">
+
+    <title>Mensa-Speisepläne der Uni Hamburg</title>
+  </head>
+  <body>
+    {% block content %}
+    {% endblock content %}
+  </body>
+
+  <script type="text/javascript" src="{% static 'mensautils/jquery.js' %}"></script>
+  {% block additional_js %}
+  {% endblock additional_js %}
+</html>

@@ -1,86 +1,78 @@
-{% load static %}<!doctype html>
-<html>
-  <head>
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+{% extends 'mensautils/base.html' %}
+{% load static %}
 
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <link rel="stylesheet" href="{% static 'mensautils/css/bootstrap.min.css' %}">
-
-    <title>Mensa-Speisepläne der Uni Hamburg</title>
-  </head>
-  <body>
-    <div class="container" style="width: 98%;">
-      <h1>Mensa-Speisepläne der Uni Hamburg</h1>
-      <div class="row">
-        {% for day, day_data in mensa_data %}
-          <div class="col-md-6">
-            <h2>
-              {% if day == 0 %}
-                Heute
-              {% else %}
-                Nächster Öffnungstag
-              {% endif %}
-              ({{ day_data.0|date:"l" }})
-            </h2>
-            {% for canteen, entries in day_data.1 %}
-              <div id="canteen-{{ day }}-{{ forloop.counter }}" class="canteen canteen-{{ forloop.counter }}" data-canteennumber="{{ forloop.counter }}">
-                <h3>
-                  {{ canteen }}
-                  <a class="up-{{ forloop.counter }} move-link" href="javascript:moveCanteen(-1, {{ forloop.counter }});">
-                    <span class="glyphicon glyphicon-arrow-up"></span>
-                  </a>
-                  <a class="down-{{ forloop.counter }} move-link" href="javascript:moveCanteen(1, {{ forloop.counter }});">
-                    <span class="glyphicon glyphicon-arrow-down"></span>
-                  </a>
-                  <a class="delete-{{ forloop.counter }} delete-link" href="javascript:hideCanteen({{ forloop.counter }});">
-                    <span class="glyphicon glyphicon-remove"></span>
-                  </a>
-                </h3>
-                <table style="width: 100%; max-width: 700px;">
+{% block content %}
+  <div class="container" style="width: 98%;">
+    <h1>Mensa-Speisepläne der Uni Hamburg</h1>
+    <div class="row">
+      {% for day, day_data in mensa_data %}
+        <div class="col-md-6">
+          <h2>
+            {% if day == 0 %}
+              Heute
+            {% else %}
+              Nächster Öffnungstag
+            {% endif %}
+            ({{ day_data.0|date:"l" }})
+          </h2>
+          {% for canteen, entries in day_data.1 %}
+            <div id="canteen-{{ day }}-{{ forloop.counter }}" class="canteen canteen-{{ forloop.counter }}" data-canteennumber="{{ forloop.counter }}">
+              <h3>
+                {{ canteen }}
+                <a class="up-{{ forloop.counter }} move-link" href="javascript:moveCanteen(-1, {{ forloop.counter }});">
+                  <span class="glyphicon glyphicon-arrow-up"></span>
+                </a>
+                <a class="down-{{ forloop.counter }} move-link" href="javascript:moveCanteen(1, {{ forloop.counter }});">
+                  <span class="glyphicon glyphicon-arrow-down"></span>
+                </a>
+                <a class="delete-{{ forloop.counter }} delete-link" href="javascript:hideCanteen({{ forloop.counter }});">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </a>
+              </h3>
+              <table style="width: 100%; max-width: 700px;">
+                <tr>
+                  <th style="width: 5%; max-width: 4px;">
+                  </th>
+                  <th style="width: 20%; max-width: 10px; text-align: right; padding-right: 6px;">
+                    Preis
+                  </th>
+                  <th style="text-align: left;">
+                    Gericht
+                  </th>
+                </tr>
+                {% for entry in entries %}
                   <tr>
-                    <th style="width: 5%; max-width: 4px;">
-                    </th>
-                    <th style="width: 20%; max-width: 10px; text-align: right; padding-right: 6px;">
-                      Preis
-                    </th>
-                    <th style="text-align: left;">
-                      Gericht
-                    </th>
+                    <td style="text-align: center;">
+                      {% if entry.vegetarian %}
+                        <span style="color: lime;">V</span>
+                      {% endif %}
+                    </td>
+                    <td style="text-align: right; padding-right: 6px;">
+                      {{ entry.price }} €
+                    </td>
+                    <td style="text-align: left;">
+                      {{ entry.title }}
+                    </td>
                   </tr>
-                  {% for entry in entries %}
-                    <tr>
-                      <td style="text-align: center;">
-                        {% if entry.vegetarian %}
-                          <span style="color: lime;">V</span>
-                        {% endif %}
-                      </td>
-                      <td style="text-align: right; padding-right: 6px;">
-                        {{ entry.price }} €
-                      </td>
-                      <td style="text-align: left;">
-                        {{ entry.title }}
-                      </td>
-                    </tr>
-                  {% endfor %}
-                </table>
-              </div>
-            {% endfor %}
-          </div>
-        {% endfor %}
-      </div>
+                {% endfor %}
+              </table>
+            </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
     </div>
+  </div>
 
-    <p id="showHiddenCanteensLink"><a href="javascript:showHiddenCanteens();">Ausgeblendete Mensen wieder einblenden</a></p>
-    <p>
-      Letzte Aktualisierung: {{ last_refresh|date:"j. F Y H:i:s" }}
-    <p>
-    <p>
-      Powered by <a href="https://gogs.mafiasi.de/mafiasi/mensa-utils">mensa-utils</a>.<br />
-      Alle Angaben ohne Gewähr. <a href="https://mafiasi.de/base/imprint">Impressum</a>
-    </p>
-  </body>
+  <p id="showHiddenCanteensLink"><a href="javascript:showHiddenCanteens();">Ausgeblendete Mensen wieder einblenden</a></p>
+  <p>
+    Letzte Aktualisierung: {{ last_refresh|date:"j. F Y H:i:s" }}
+  <p>
+  <p>
+    Powered by <a href="https://gogs.mafiasi.de/mafiasi/mensa-utils">mensa-utils</a>.<br />
+    Alle Angaben ohne Gewähr. <a href="https://mafiasi.de/base/imprint">Impressum</a>
+  </p>
+{% endblock content %}
 
-  <script type="text/javascript" src="{% static 'mensautils/jquery.js' %}"></script>
+{% block additional_js %}
   <script type="text/javascript" src="{% static 'mensautils/mensa.js' %}"></script>
-</html>
+{% endblock additional_js %}
