@@ -10,13 +10,15 @@
     <title>Mensa-Speisepläne der Uni Hamburg</title>
   </head>
   <body>
-    {% block content %}
-    {% endblock content %}
+    <div class="container-fluid" style="margin: 0.5em 1em;">
+      {% block content %}
+      {% endblock content %}
 
-    <p>
-      Powered by <a href="https://gogs.mafiasi.de/mafiasi/mensa-utils">mensa-utils</a>.<br />
-      Alle Angaben ohne Gewähr. <a href="https://mafiasi.de/base/imprint">Impressum</a>
-    </p>
+      <p>
+        Powered by <a href="https://gogs.mafiasi.de/mafiasi/mensa-utils">mensa-utils</a>.<br />
+        Alle Angaben ohne Gewähr. <a href="https://mafiasi.de/base/imprint">Impressum</a>
+      </p>
+    </div>
   </body>
 
   <script type="text/javascript" src="{% static 'mensautils/jquery.js' %}"></script>

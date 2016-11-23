@@ -1,29 +1,18 @@
 #!/usr/bin/env python3
 """Fetch and display canteen plans."""
 import re
-from datetime import datetime, timedelta
+from datetime import date
 
 import requests
-from django.conf import settings
 
 
-def fetch_mensa() -> dict:
+def fetch_canteen(day: date, canteen_link: str) -> dict:
     """Generate output."""
-    today = datetime.today()
-    tomorrow = today + timedelta(days=1)
-    year = today.year
-    days = [(0, today), (99, tomorrow)]  # TODO: this will probably break on friday (at least a bit)
-
-    mensa_data = {}
-    for day in days:
-        mensa_data[day[0]] = day[1], []
-        for canteen in settings.CANTEENS:
-            # generate list of generator to iterate multiple times
-            mensa_data[day[0]][1].append(
-                (canteen[0],
-                 list(fetch_plan(canteen[1].format(year, day[0])))))
-
-    return mensa_data
+    today = date.today()
+    day_param = 99
+    if day == today:
+        day_param = 0
+    return fetch_plan(canteen_link.format(day.year, day_param))
 
 
 def fetch_plan(url):
@@ -87,6 +76,3 @@ def remove_nested_brackets(string):
             if brackets_count <= 0:
                 appending = True
     return new_string
-
-if __name__ == '__main__':
-    print(fetch_mensa())

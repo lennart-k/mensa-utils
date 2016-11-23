@@ -2,71 +2,69 @@
 {% load static %}
 
 {% block content %}
-  <div class="container" style="width: 98%;">
-    <h1>Mensa-Speisepläne der Uni Hamburg</h1>
-    <div class="row">
-      {% for day, day_data in mensa_data %}
-        <div class="col-md-6">
-          <h2>
-            {% if day == 0 %}
-              Heute
-            {% else %}
-              Nächster Öffnungstag
-            {% endif %}
-            ({{ day_data.0|date:"l" }})
-          </h2>
-          {% for canteen, entries in day_data.1 %}
-            <div id="canteen-{{ day }}-{{ forloop.counter }}" class="canteen canteen-{{ forloop.counter }}" data-canteennumber="{{ forloop.counter }}">
-              <h3>
-                {{ canteen }}
-                <a class="up-{{ forloop.counter }} move-link" href="javascript:moveCanteen(-1, {{ forloop.counter }});">
-                  <span class="glyphicon glyphicon-arrow-up"></span>
-                </a>
-                <a class="down-{{ forloop.counter }} move-link" href="javascript:moveCanteen(1, {{ forloop.counter }});">
-                  <span class="glyphicon glyphicon-arrow-down"></span>
-                </a>
-                <a class="delete-{{ forloop.counter }} delete-link" href="javascript:hideCanteen({{ forloop.counter }});">
-                  <span class="glyphicon glyphicon-remove"></span>
-                </a>
-              </h3>
-              <table style="width: 100%; max-width: 700px;">
+  <h1>Mensa-Speisepläne der Uni Hamburg</h1>
+  <div class="row">
+    {% for day, canteens in mensa_data.items %}
+      <div class="col-md-6">
+        <h2>
+          {% if day == 0 %}
+            Heute
+          {% else %}
+            Nächster Öffnungstag
+          {% endif %}
+          ({{ day|date:"l" }})
+        </h2>
+        {% for canteen, entries in canteens.items %}
+          <div id="canteen-{{ day }}-{{ forloop.counter }}" class="canteen canteen-{{ forloop.counter }}" data-canteennumber="{{ forloop.counter }}">
+            <h3>
+              {{ canteen }}
+              <a class="up-{{ forloop.counter }} move-link" href="javascript:moveCanteen(-1, {{ forloop.counter }});">
+                <span class="glyphicon glyphicon-arrow-up"></span>
+              </a>
+              <a class="down-{{ forloop.counter }} move-link" href="javascript:moveCanteen(1, {{ forloop.counter }});">
+                <span class="glyphicon glyphicon-arrow-down"></span>
+              </a>
+              <a class="delete-{{ forloop.counter }} delete-link" href="javascript:hideCanteen({{ forloop.counter }});">
+                <span class="glyphicon glyphicon-remove"></span>
+              </a>
+            </h3>
+            <table style="width: 100%; max-width: 700px;">
+              <tr>
+                <th style="width: 5%; max-width: 4px;">
+                </th>
+                <th style="width: 15%; max-width: 10px; text-align: right; padding-right: 15px;">
+                  Preis
+                </th>
+                <th style="width: 15%; max-width: 10px; text-align: right; padding-right: 15px;">
+                  Bed.
+                </th>
+                <th style="text-align: left;">
+                  Gericht
+                </th>
+              </tr>
+              {% for entry in entries %}
                 <tr>
-                  <th style="width: 5%; max-width: 4px;">
-                  </th>
-                  <th style="width: 15%; max-width: 10px; text-align: right; padding-right: 15px;">
-                    Preis
-                  </th>
-                  <th style="width: 15%; max-width: 10px; text-align: right; padding-right: 15px;">
-                    Bed.
-                  </th>
-                  <th style="text-align: left;">
-                    Gericht
-                  </th>
+                  <td style="text-align: center;">
+                    {% if entry.dish.vegetarian %}
+                      <span style="color: lime;">V</span>
+                    {% endif %}
+                  </td>
+                  <td style="text-align: right; padding-right: 15px;">
+                    {{ entry.price }} €
+                  </td>
+                  <td style="text-align: right; padding-right: 15px;">
+                    {{ entry.price_staff }} €
+                  </td>
+                  <td style="text-align: left;">
+                    {{ entry.dish.name }}
+                  </td>
                 </tr>
-                {% for entry in entries %}
-                  <tr>
-                    <td style="text-align: center;">
-                      {% if entry.vegetarian %}
-                        <span style="color: lime;">V</span>
-                      {% endif %}
-                    </td>
-                    <td style="text-align: right; padding-right: 15px;">
-                      {{ entry.price }} €
-                    </td>
-                    <td style="text-align: right; padding-right: 15px;">
-                      {{ entry.price_staff }} €
-                    </td>
-                    <td style="text-align: left;">
-                      {{ entry.title }}
-                    </td>
-                  </tr>
-                {% endfor %}
-              </table>
-            </div>
-          {% endfor %}
-        </div>
-      {% endfor %}
-    </div>
+              {% endfor %}
+            </table>
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
   </div>
 
   <p id="showHiddenCanteensLink"><a href="javascript:showHiddenCanteens();">Ausgeblendete Mensen wieder einblenden</a></p>
