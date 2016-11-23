@@ -122,8 +122,12 @@ STATIC_URL = '/static/'
 
 
 CANTEENS = [
+    ('Bergedorf',
+     'http://speiseplan.studierendenwerk-hamburg.de/de/520/{}/{}/'),
     ('Bucerius Law School',
      'http://speiseplan.studierendenwerk-hamburg.de/de/410/{}/{}/'),
+    ('Café Berliner Tor',
+     'http://speiseplan.studierendenwerk-hamburg.de/de/531/{}/{}/'),
     ('Café CFEL',
      'http://speiseplan.studierendenwerk-hamburg.de/de/680/{}/{}/'),
     ('Café Jungiusstraße',
@@ -132,6 +136,8 @@ CANTEENS = [
      'http://speiseplan.studierendenwerk-hamburg.de/de/340/{}/{}/'),
     ('Geomatikum',
      'http://speiseplan.studierendenwerk-hamburg.de/de/540/{}/{}/'),
+    ('Harburg',
+     'http://speiseplan.studierendenwerk-hamburg.de/de/570/{}/{}/'),
     ('Philturm',
      'http://speiseplan.studierendenwerk-hamburg.de/de/350/{}/{}/'),
     ('Stellingen',
