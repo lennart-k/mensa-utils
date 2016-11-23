@@ -16,7 +16,9 @@ def store_canteen_data(canteen_data: dict):
                 name=dish_data['title'], vegetarian=dish_data['vegetarian'])
 
             price = Decimal(dish_data['price'].replace(',', '.'))
+            price_staff = Decimal(dish_data['price_staff'].replace(',', '.'))
 
             # add serving
             Serving.objects.get_or_create(
-                date=datetime.today(), canteen=canteen, dish=dish, price=price)
+                date=datetime.today(), canteen=canteen, dish=dish, price=price,
+                price_staff=price_staff)

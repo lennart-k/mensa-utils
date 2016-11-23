@@ -31,7 +31,7 @@ def fetch_plan(url):
     plan = requests.get(url)
 
     pattern = re.compile(
-        r'class="dish-description">(.*?)</td>.*?(\d+,\d+)',
+        r'class="dish-description">(.*?)</td>.*?(\d+,\d+).*?(\d+,\d+)',
         flags=re.DOTALL)
 
     foods = pattern.findall(plan.text)
@@ -58,9 +58,13 @@ def fetch_plan(url):
         price_match = price_regex.search(food[1])
         price = '{:2d},{:02d}'.format(
             int(price_match.group(1)), int(price_match.group(2)))
+        price_staff_match = price_regex.search(food[2])
+        price_staff = '{:2d},{:02d}'.format(
+            int(price_staff_match.group(1)), int(price_staff_match.group(2)))
         yield {
             'vegetarian': vegetarian,
             'price': price,
+            'price_staff': price_staff,
             'title': replaced,
         }
 
