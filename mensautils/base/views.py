@@ -21,6 +21,7 @@ def index(request: HttpRequest) -> HttpResponse:
             canteen_data[day][canteen.name] = canteen.servings.filter(
                 date=day)
     return render(request, 'mensautils/mensa.html', {
+        'today': today,
         'mensa_data': canteen_data,
         'last_updated': Serving.objects.aggregate(
             Max('last_updated'))['last_updated__max'],

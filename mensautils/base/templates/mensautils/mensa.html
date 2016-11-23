@@ -7,7 +7,7 @@
     {% for day, canteens in mensa_data.items %}
       <div class="col-md-6">
         <h2>
-          {% if day == 0 %}
+          {% if day == today %}
             Heute
           {% else %}
             Nächster Öffnungstag
@@ -15,7 +15,8 @@
           ({{ day|date:"l" }})
         </h2>
         {% for canteen, entries in canteens.items %}
-          <div id="canteen-{{ day }}-{{ forloop.counter }}" class="canteen canteen-{{ forloop.counter }}" data-canteennumber="{{ forloop.counter }}">
+          <div id="canteen-{% if day == today %}0{% else %}99{% endif %}-{{ forloop.counter }}"
+               class="canteen canteen-{{ forloop.counter }}" data-canteennumber="{{ forloop.counter }}">
             <h3>
               {{ canteen }}
               <a class="up-{{ forloop.counter }} move-link" href="javascript:moveCanteen(-1, {{ forloop.counter }});">

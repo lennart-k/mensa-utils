@@ -166,7 +166,7 @@
       }
     });
 
-    hideUnnecessaryCanteenButtons(getCanteenOrder());
+    hideUnnecessaryCanteenButtons(canteenOrder);
     hideHiddenCanteens();
   }
 
