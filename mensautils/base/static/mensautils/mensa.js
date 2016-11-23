@@ -99,14 +99,22 @@
     }
 
     var hiddenCanteens = getHiddenCanteens();
-    if (hiddenCanteens.indexOf(canteenNumber) >= 0) {
-      // already hidden
+    var canteenOrder = getCanteenOrder();
+    if (hiddenCanteens.indexOf(canteenNumber) >= 0 ||
+        canteenOrder.indexOf(canteenNumber) < 0) {
+      // already hidden or not known
       return true;
     }
 
     hiddenCanteens.push(canteenNumber);
+
     saveHiddenCanteens(hiddenCanteens);
     hideHiddenCanteens();
+
+    // delete element from canteen order
+    canteenOrder.splice(canteenOrder.indexOf(canteenNumber), 1);
+    saveCanteenOrder(canteenOrder);
+    hideUnnecessaryCanteenButtons(canteenOrder);
   }
   window.hideCanteen = hideCanteen;
 
