@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class Dish(models.Model):
     name = models.CharField(verbose_name=_('name'), max_length=300)
+    vegetarian = models.BooleanField()
 
     def __str__(self):
         return self.name
