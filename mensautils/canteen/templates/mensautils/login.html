@@ -6,6 +6,9 @@
   <h1>Einloggen</h1>
   <form method="POST" action="{{ request.get_full_path }}">
     {% csrf_token %}
+
+    <p>Die Anmeldung erfolgt über den Mafiasi-Account.</p>
+
     <table>
       {{ form }}
     </table>

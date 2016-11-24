@@ -120,6 +120,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+LOGIN_URL = '/login/'
+
 
 CANTEENS = [
     ('Bergedorf',
@@ -147,3 +149,5 @@ CANTEENS = [
 ]
 
 FUZZY_MIN_RATIO = 95
+
+RATING_DAILY_LIMIT = 2

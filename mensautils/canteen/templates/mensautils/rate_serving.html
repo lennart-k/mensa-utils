@@ -1,0 +1,27 @@
+{% extends 'mensautils/base.html' %}
+{% load static %}
+
+{% block content %}
+  <h1>Mensa-Speisepläne der Uni Hamburg</h1>
+
+  {% if request.user.is_authenticated %}
+    <p>Hallo, <em>{{ request.user.username }}</em>.</p>
+  {% endif %}
+
+  <form method="POST" action="{{ request.get_full_path }}">
+    {% csrf_token %}
+    <p>
+      Du bewertest gerade <strong>{{ serving.dish.name }}</strong>
+      in der Mensa <em>{{ serving.canteen.name }}</em>.
+    </p>
+
+    <table>
+    {{ form }}
+    </table>
+    <input type="submit" value="Bewerten" />
+  </form>
+{% endblock content %}
+
+{% block additional_css %}
+  <link rel="stylesheet" href="{% static 'mensautils/css/rate_serving.css' %}">
+{% endblock additional_css %}

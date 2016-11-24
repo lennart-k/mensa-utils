@@ -8,9 +8,18 @@
     <link rel="stylesheet" href="{% static 'mensautils/css/bootstrap.min.css' %}">
 
     <title>Mensa-Speisepläne der Uni Hamburg</title>
+
+    {% block additional_css %}
+    {% endblock additional_css %}
   </head>
   <body>
     <div class="container-fluid" style="margin: 0.5em 1em;">
+      {% for message in messages %}
+        <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
+          {{ message }}
+        </div>
+      {% endfor %}
+
       {% block content %}
       {% endblock content %}
 

@@ -38,6 +38,13 @@
               <tr>
                 <th style="width: 5%; max-width: 4px;">
                 </th>
+                {% if request.user.is_authenticated %}
+                  <th style="width: 5%; max-width: 4px;">
+                  </th>
+                {% endif %}
+                <th style="width: 10%; max-width: 15px;">
+                  Bewertung
+                </th>
                 <th style="width: 15%; max-width: 10px; text-align: right; padding-right: 15px;">
                   Preis
                 </th>
@@ -53,6 +60,17 @@
                   <td style="text-align: center;">
                     {% if entry.dish.vegetarian %}
                       <span style="color: #76a93b;">Veg.</span>
+                    {% endif %}
+                  </td>
+                  {% if request.user.is_authenticated %}
+                    <td style="text-align: right; padding-right: 15px;{% if entry.deprecated %} color: #c9c9c9;{% endif %}">
+                      <a href="{% url 'mensautils.canteen:rate_serving' entry.pk %}">Bewerten</a>
+                    </td>
+                  {% endif %}
+                  <td style="text-align: center; padding-right: 15px;{% if entry.deprecated %} color: #c9c9c9;{% endif %}">
+                    {% if entry.average_rating %}
+                      {{ entry.average_rating }}/5<br />
+                      ({{ entry.rating_count }} Pers.)
                     {% endif %}
                   </td>
                   <td style="text-align: right; padding-right: 15px;{% if entry.deprecated %} color: #c9c9c9;{% endif %}">
@@ -76,7 +94,7 @@
   <p id="showHiddenCanteensLink"><a href="javascript:showHiddenCanteens();">Ausgeblendete Mensen wieder einblenden</a></p>
   <p>
     Letzte Aktualisierung: {{ last_updated|date:"j. F Y H:i:s" }}<br />
-    <a href="{% url 'mensautils.base:stats' %}">Statistiken</a> &bull;
+    <a href="{% url 'mensautils.canteen:stats' %}">Statistiken</a> &bull;
     {% if request.user.is_authenticated %}
       <a href="{% url 'logout' %}?next={{ request.get_full_path }}">Abmelden</a>
     {% else %}

@@ -1,5 +1,7 @@
 from django.conf import settings
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.db.models import Avg
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from fuzzywuzzy import fuzz
@@ -42,3 +44,25 @@ class Serving(models.Model):
     def __str__(self):
         return '{}: {} ({}, {})'.format(self.canteen, str(self.dish), str(self.date),
                                         self.price)
+
+    def average_rating(self) -> float:
+        """Get average rating."""
+        return self.ratings.aggregate(Avg('rating'))['rating__avg']
+
+    def rating_count(self) -> int:
+        """Get rating count."""
+        return self.ratings.count()
+
+
+class Rating(models.Model):
+    class Meta:
+        unique_together = [('user', 'serving')]
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='ratings')
+    serving = models.ForeignKey(
+        Serving, on_delete=models.CASCADE, related_name='ratings')
+    rating = models.SmallIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)])
+
+    def __str__(self):
+        return '{}: {} ({})'.format(self.rating, str(self.serving), self.user)
