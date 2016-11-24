@@ -12,6 +12,9 @@
   .displayOnSmallWidth {
     display: none;
   }
+  .displayOnHighWidth {
+    display: block;
+  }
 }
 @media (max-width: 500px) {
   th {
@@ -23,5 +26,8 @@
   }
   .displayOnSmallWidth {
     display: block;
+  }
+  .displayOnHighWidth {
+    display: none;
   }
 }
