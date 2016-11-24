@@ -47,6 +47,8 @@ class Serving(models.Model):
 
     def average_rating(self) -> float:
         """Get average rating."""
+        if hasattr(self, 'ratings__rating__avg'):
+            return self.ratings__rating__avg
         return self.ratings.aggregate(Avg('rating'))['rating__avg']
 
     def rating_count(self) -> int:

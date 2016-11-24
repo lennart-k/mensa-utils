@@ -4,7 +4,7 @@ from datetime import date, timedelta
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Max
+from django.db.models import Max, Avg
 from django.http import HttpRequest
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -17,14 +17,17 @@ from mensautils.canteen.statistics import get_most_frequent_dishes
 
 def index(request: HttpRequest) -> HttpResponse:
     today = date.today()
-    days = [today, today + timedelta(days=1)]
-    canteens = Canteen.objects.order_by('name')
+    tomorrow = today + timedelta(days=1)
+    servings = Serving.objects.filter(date__gte=today, date__lte=tomorrow).order_by(
+        'canteen__name', 'date', 'deprecated', 'dish__name').select_related(
+        'dish', 'canteen').annotate(ratings__rating__avg=Avg('ratings__rating'))
     canteen_data = OrderedDict()
-    for day in days:
-        canteen_data[day] = OrderedDict()
-        for canteen in canteens:
-            canteen_data[day][canteen.name] = canteen.servings.filter(
-                date=day).order_by('deprecated', 'dish__name')
+    canteen_data[today] = OrderedDict()
+    canteen_data[tomorrow] = OrderedDict()
+    for serving in servings:
+        if serving.canteen.name not in canteen_data[serving.date]:
+            canteen_data[serving.date][serving.canteen.name] = []
+        canteen_data[serving.date][serving.canteen.name].append(serving)
     return render(request, 'mensautils/mensa.html', {
         'today': today,
         'mensa_data': canteen_data,
