@@ -17,6 +17,14 @@
   }
 
   /**
+   * remove all elements from local storage
+   */
+  function purgeLocalStorage() {
+    localStorage.removeItem('canteen-order');
+    localStorage.removeItem('hidden-canteens');
+  }
+
+  /**
    * Get hidden canteens.
    */
   function getHiddenCanteens() {
@@ -195,12 +203,35 @@
     });
   }
 
+  /**
+   * check integrity of local storage. Purge it if not given.
+   */
+  function integrityCheck() {
+    if (typeof(localStorage) === 'undefined') {
+      // not supported in this browser
+      return;
+    }
+
+    var availableCanteens = getDOMCanteenOrder();
+    var localStorageCanteenOrder = getCanteenOrder();
+    var localStorageHiddenCanteens = getHiddenCanteens();
+    $.each(availableCanteens, function(key, canteenNumber) {
+      if (localStorageCanteenOrder.indexOf(canteenNumber) < 0 &&
+          localStorageHiddenCanteens.indexOf(canteenNumber) < 0) {
+        // check failed
+        purgeLocalStorage();
+        return false;  // break
+      }
+    });
+  }
+
   $(function(){
     // hide move links if not supported
     if (typeof(localStorage) === 'undefined') {
       $('.move-link').hide();
     }
 
+    integrityCheck();
     restoreCanteenOrder();
   });
 })();
