@@ -20,7 +20,7 @@ def index(request: HttpRequest) -> HttpResponse:
         canteen_data[day] = OrderedDict()
         for canteen in canteens:
             canteen_data[day][canteen.name] = canteen.servings.filter(
-                date=day).order_by('dish__name')
+                date=day).order_by('deprecated', 'dish__name')
     return render(request, 'mensautils/mensa.html', {
         'today': today,
         'mensa_data': canteen_data,
