@@ -50,13 +50,13 @@
                       <span style="color: lime;">V</span>
                     {% endif %}
                   </td>
-                  <td style="text-align: right; padding-right: 15px;">
+                  <td style="text-align: right; padding-right: 15px;{% if entry.deprecated %} color: #c9c9c9;{% endif %}">
                     {{ entry.price }} €
                   </td>
-                  <td style="text-align: right; padding-right: 15px;">
+                  <td style="text-align: right; padding-right: 15px;{% if entry.deprecated %} color: #c9c9c9;{% endif %}">
                     {{ entry.price_staff }} €
                   </td>
-                  <td style="text-align: left;">
+                  <td style="text-align: left;{% if entry.deprecated %} color: #c9c9c9;{% endif %}">
                     {{ entry.dish.name }}
                   </td>
                 </tr>

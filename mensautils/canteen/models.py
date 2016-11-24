@@ -37,6 +37,7 @@ class Serving(models.Model):
     price_staff = models.DecimalField(max_digits=4, decimal_places=2)
 
     last_updated = models.DateTimeField(default=timezone.now)
+    deprecated = models.BooleanField(default=False)
 
     def __str__(self):
         return '{}: {} ({}, {})'.format(self.canteen, str(self.dish), str(self.date),

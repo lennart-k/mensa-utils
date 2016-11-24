@@ -20,5 +20,3 @@ class Command(BaseCommand):
                 canteen_data = fetch_canteen(day, canteen_url)
                 store_canteen_data(
                     day, canteen_name, canteen_data)
-                store_canteen_data(
-                    day, canteen_name, canteen_data)
