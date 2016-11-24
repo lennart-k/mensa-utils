@@ -51,7 +51,11 @@
    */
   function getCanteenOrder() {
     try {
-      return JSON.parse(localStorage.getItem('canteen-order'));
+      var canteenOrder = JSON.parse(localStorage.getItem('canteen-order'));
+      if (Array.isArray(canteenOrder)) {
+        return canteenOrder;
+      }
+      return getDOMCanteenOrder();
     } catch(e) {
       return getDOMCanteenOrder();
     }
