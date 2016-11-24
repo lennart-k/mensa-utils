@@ -124,6 +124,8 @@ LOGIN_URL = '/login/'
 
 
 CANTEENS = [
+    ('Berliner Tor',
+     'http://speiseplan.studierendenwerk-hamburg.de/de/530/{}/{}/'),
     ('Bergedorf',
      'http://speiseplan.studierendenwerk-hamburg.de/de/520/{}/{}/'),
     ('Bucerius Law School',
