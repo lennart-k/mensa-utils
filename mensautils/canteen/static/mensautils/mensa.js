@@ -128,7 +128,7 @@
     saveCanteenOrder(canteenOrder);
     hideUnnecessaryCanteenButtons(canteenOrder);
 
-    $('#showHiddenCanteensLink').hide();
+    $('#showHiddenCanteensLink').show();
   }
   window.hideCanteen = hideCanteen;
 
