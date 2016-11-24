@@ -1,0 +1,14 @@
+{% extends 'mensautils/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+  <h1>Einloggen</h1>
+  <form method="POST" action="{{ request.get_full_path }}">
+    {% csrf_token %}
+    <table>
+      {{ form }}
+    </table>
+    <input type="submit" value="{% trans 'Login' %}" />
+  </form>
+{% endblock content %}

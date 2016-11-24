@@ -3,6 +3,11 @@
 
 {% block content %}
   <h1>Mensa-Speisepläne der Uni Hamburg</h1>
+
+  {% if request.user.is_authenticated %}
+    <p>Hallo, <em>{{ request.user.username }}</em>.</p>
+  {% endif %}
+
   <div class="row">
     {% for day, canteens in mensa_data.items %}
       <div class="col-md-6">
@@ -71,7 +76,12 @@
   <p id="showHiddenCanteensLink"><a href="javascript:showHiddenCanteens();">Ausgeblendete Mensen wieder einblenden</a></p>
   <p>
     Letzte Aktualisierung: {{ last_updated|date:"j. F Y H:i:s" }}<br />
-    <a href="{% url 'mensautils.base:stats' %}">Statistiken</a>
+    <a href="{% url 'mensautils.base:stats' %}">Statistiken</a> &bull;
+    {% if request.user.is_authenticated %}
+      <a href="{% url 'logout' %}?next={{ request.get_full_path }}">Abmelden</a>
+    {% else %}
+      <a href="{% url 'login' %}?next={{ request.get_full_path }}">Anmelden</a>
+    {% endif %}
   <p>
 {% endblock content %}
 
