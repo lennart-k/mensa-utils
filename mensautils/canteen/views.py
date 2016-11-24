@@ -67,7 +67,7 @@ def rate_serving(request: HttpRequest, serving_pk: int) -> HttpResponse:
                 user=request.user, serving=serving,
                 rating=form.cleaned_data.get('rating'))
         messages.success(
-            request, 'Die Nachricht wurde erfolgreich gespeichert.')
+            request, 'Die Bewertung wurde erfolgreich gespeichert.')
         return redirect(reverse('mensautils.canteen:index'))
 
     return render(
