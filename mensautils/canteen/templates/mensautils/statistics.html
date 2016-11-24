@@ -5,13 +5,28 @@
   <div class="container" style="width: 98%;">
     <h1>Statistiken - Mensa-Speisepläne der Uni Hamburg</h1>
 
-    <h2>Die am häufigsten servierten Gerichte</h2>
-    <ol>
-    {% for dish in most_frequent_dishes %}
-      <li>
-        {{ dish.name }} ({{ dish.servings__count }} mal serviert)
-      </li>
-    {% endfor %}
-    </ol>
+    <div class="row">
+      <div class="col-md-6">
+        <h2>Die am häufigsten servierten Gerichte</h2>
+        <ol>
+          {% for dish in most_frequent_dishes %}
+            <li>
+              {{ dish.name }} ({{ dish.servings__count }} mal serviert)
+            </li>
+          {% endfor %}
+        </ol>
+      </div>
+      <div class="col-md-6">
+        <h2>Die beliebtesten Gerichte</h2>
+        <ol>
+          {% for dish in most_favored_dishes %}
+            <li>
+              {{ dish.name }}
+              (durchschnittlich {{ dish.servings__ratings__rating__avg }}/5)
+            </li>
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
   </div>
 {% endblock content %}

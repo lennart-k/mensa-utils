@@ -12,7 +12,8 @@ from django.urls import reverse
 
 from mensautils.canteen.forms import RateForm
 from mensautils.canteen.models import Canteen, Serving, Rating
-from mensautils.canteen.statistics import get_most_frequent_dishes
+from mensautils.canteen.statistics import get_most_frequent_dishes, \
+    get_most_favored_dishes
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -38,9 +39,11 @@ def index(request: HttpRequest) -> HttpResponse:
 
 def stats(request: HttpRequest) -> HttpResponse:
     most_frequent_dishes = get_most_frequent_dishes()
+    most_favored_dishes = get_most_favored_dishes()
     return render(
         request, 'mensautils/statistics.html', {
             'most_frequent_dishes': most_frequent_dishes,
+            'most_favored_dishes': most_favored_dishes,
         })
 
 
