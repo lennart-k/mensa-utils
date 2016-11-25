@@ -15,14 +15,6 @@
   }
 
   /**
-   * remove all elements from local storage
-   */
-  function purgeLocalStorage() {
-    localStorage.removeItem('canteen-order');
-    localStorage.removeItem('hidden-canteens');
-  }
-
-  /**
    * Get hidden canteens.
    */
   function getHiddenCanteens() {
@@ -213,16 +205,23 @@
     }
 
     var availableCanteens = getDOMCanteenOrder();
-    var localStorageCanteenOrder = getCanteenOrder();
-    var localStorageHiddenCanteens = getHiddenCanteens();
+    var canteenOrder = getCanteenOrder();
+    var hiddenCanteens = getHiddenCanteens();
     $.each(availableCanteens, function(key, canteenNumber) {
-      if (localStorageCanteenOrder.indexOf(canteenNumber) < 0 &&
-          localStorageHiddenCanteens.indexOf(canteenNumber) < 0) {
-        // check failed
-        purgeLocalStorage();
-        return false;  // break
+      if (canteenOrder.indexOf(canteenNumber) < 0 &&
+          hiddenCanteens.indexOf(canteenNumber) < 0) {
+        // check failed, add canteen
+        canteenOrder.push(canteenNumber)
       }
     });
+    // make sure that no canteen is in list of orders which does not exist
+    $.each(canteenOrder, function(index, canteenNumber) {
+      if (availableCanteens.indexOf(canteenNumber) < 0) {
+        canteenOrder.splice(index, 1);
+      }
+    });
+
+    saveCanteenOrder(canteenOrder);
   }
 
   $(function(){
