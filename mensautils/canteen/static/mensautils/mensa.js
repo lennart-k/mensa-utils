@@ -200,6 +200,30 @@
   }
 
   /**
+   * Set heights of canteens to be equal to each other when screen
+   * is wide enough.
+   */
+  function updateResponsiveHeights() {
+    if ($(window).width() < 921) {
+      // screen is too narrow, set all heights to auto
+      $('.canteen').css('height', 'auto');
+    } else {
+      // screen is wide enough, iterate through all canteens to set height explicitly
+      $.each(getDOMCanteenOrder(), function(index, canteenNumber) {
+        var height = 0;
+        $.each(DAYS, function(index, day) {
+          var elem = $('#canteen-' + day + '-' + canteenNumber);
+          var currentHeight = elem.height();
+          if (currentHeight > height) {
+            height = currentHeight;
+          }
+        });
+        $('.canteen-' + canteenNumber).css('height', height);
+      });
+    }
+  };
+
+  /**
    * check integrity of local storage. Purge it if not given.
    */
   function integrityCheck() {
@@ -236,5 +260,7 @@
 
     integrityCheck();
     restoreCanteenOrder();
+    updateResponsiveHeights();
+    $(window).resize(updateResponsiveHeights);
   });
 })();
