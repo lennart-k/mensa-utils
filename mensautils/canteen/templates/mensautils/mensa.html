@@ -95,10 +95,12 @@
                       </span>
                     {% endif %}
                     {% if entry.date == today %}
-                      <a href="{% url 'mensautils.canteen:report_deprecation' entry.pk %}">
-                        <span class="glyphicon glyphicon-remove"></span>
-                      </a>
-                      {% if not entry.official %}
+                      {% if not entry.deprecated %}
+                        <a href="{% url 'mensautils.canteen:report_deprecation' entry.pk %}">
+                          <span class="glyphicon glyphicon-remove"></span>
+                        </a>
+                      {% endif %}
+                      {% if not entry.official and not entry.verified %}
                         <a href="{% url 'mensautils.canteen:verify_serving' entry.pk %}">
                           <span class="glyphicon glyphicon-ok"></span>
                         </a>
