@@ -39,6 +39,7 @@ class Serving(models.Model):
     price_staff = models.DecimalField(max_digits=4, decimal_places=2)
 
     last_updated = models.DateTimeField(default=timezone.now)
+    official = models.BooleanField(default=True)
     officially_deprecated = models.BooleanField(default=False)
 
     def __str__(self):

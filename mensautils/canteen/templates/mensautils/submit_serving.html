@@ -1,0 +1,55 @@
+{% extends 'mensautils/base.html' %}
+{% load static %}
+
+{% block content %}
+  <h1>Mensa-Speisepläne der Uni Hamburg</h1>
+
+  {% if request.user.is_authenticated %}
+    <p>Hallo, <em>{{ request.user.username }}</em>.</p>
+  {% endif %}
+
+  <form method="POST" action="{{ request.get_full_path }}">
+    {% csrf_token %}
+    <p>
+      Hier kannst Du der Mensa <em>{{ serving.canteen.name }}</em> ein neues, heute
+      angebotenes Gericht vorschlagen. Bitte stelle vorher sicher, dass noch kein
+      entsprechendes Gericht bereits vorgeschlagen wurde. Übernehme die
+      Gerichtbezeichnung nach Möglichkeit bitte wörtlich vom offiziellen Mensa-Speiseplan.
+    </p>
+
+    <p>
+      <label for="id_name">Bezeichnung:</label>
+      {{ form.name }}
+      {% for error in form.name.errors %}
+        {{ error }}<br />
+      {% endfor %}
+    </p>
+    <p>
+      <label for="id_name">Preis:</label>
+      {{ form.price }}
+      {% for error in form.price.errors %}
+        {{ error }}<br />
+      {% endfor %}
+    </p>
+    <p>
+      <label for="id_name">Preis (Bedienstete):</label>
+      {{ form.price_staff }}
+      {% for error in form.price_staff.errors %}
+        {{ error }}<br />
+      {% endfor %}
+    </p>
+    <p>
+      {{ form.vegetarian }}
+      <label for="id_vegetarian">Vegetarisch</label>
+      {% for error in form.vegetarian.errors %}
+        {{ error }}<br />
+      {% endfor %}
+    </p>
+    <p>
+      {% for error in form.non_field_errors %}
+        {{ error }}<br />
+      {% endfor %}
+    </p>
+    <input type="submit" value="Gericht ergänzen" />
+  </form>
+{% endblock content %}

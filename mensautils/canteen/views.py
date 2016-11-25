@@ -10,8 +10,9 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 
-from mensautils.canteen.forms import RateForm
-from mensautils.canteen.models import Canteen, Serving, Rating, InofficialDeprecation
+from mensautils.canteen.forms import RateForm, SubmitServingForm
+from mensautils.canteen.models import Canteen, Serving, Rating, InofficialDeprecation, \
+    Dish
 from mensautils.canteen.statistics import get_most_frequent_dishes, \
     get_most_favored_dishes
 
@@ -100,6 +101,43 @@ def rate_serving(request: HttpRequest, serving_pk: int) -> HttpResponse:
     return render(
         request, 'mensautils/rate_serving.html', {
             'serving': serving,
+            'form': form,
+        })
+
+
+@login_required
+def submit_serving(request: HttpRequest, canteen_pk: int) -> HttpResponse:
+    canteen = get_object_or_404(Canteen, pk=canteen_pk)
+
+    form = SubmitServingForm()
+    if request.method == 'POST':
+        form = SubmitServingForm(request.POST)
+        if form.is_valid():
+            dish = Dish.fuzzy_find_or_create(form.cleaned_data.get('name'),
+                                             form.cleaned_data.get('vegetarian'))
+            price = form.cleaned_data.get('price')
+            price_staff = form.cleaned_data.get('price_staff')
+            today = date.today()
+
+            # ensure that serving does not exist yet
+            if Serving.objects.filter(
+                    dish=dish, canteen=canteen, date=today, price=price,
+                    price_staff=price_staff).count() > 0:
+                messages.warning(
+                    request, 'Das Gericht wurde bereits vorgeschlagen.')
+                return redirect(reverse('mensautils.canteen:index'))
+
+            # save submit
+            Serving.objects.create(
+                dish=dish, canteen=canteen, date=today, price=price,
+                price_staff=price_staff, official=False)
+            messages.success(
+                request, 'Das Gericht wurde erfolgreich gespeichert.')
+            return redirect(reverse('mensautils.canteen:index'))
+
+    return render(
+        request, 'mensautils/submit_serving.html', {
+            'canteen': canteen,
             'form': form,
         })
 

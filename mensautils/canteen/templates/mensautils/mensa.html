@@ -103,6 +103,7 @@
                 <td colspan="5"><em>Keine Daten.</em></td>
               {% endfor %}
             </table>
+            <a href="{% url 'mensautils.canteen:submit_serving' canteen.pk %}"><span class="glyphicon glyphicon-plus"></span></a>
           </div>
         {% endfor %}
       </div>
@@ -114,7 +115,8 @@
   <h4>Legende</h4>
   <p>
     <span class="vegetarian">Veg.</span> vegetarisch/vegan<br />
-    <span class="deprecated">Gericht wurde aus dem Speiseplan entfernt</span>
+    <span class="deprecated">Gericht wurde aus dem Speiseplan entfernt</span><br />
+    <span class="unverified">Das Gericht wurde von einem Nutzer vorgeschlagen und noch nicht bestätigt.</span>
   </p>
 
   <hr />

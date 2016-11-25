@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^stats/$', views.stats, name='stats'),
     url(r'^rate/(\d+)/$', views.rate_serving, name='rate_serving'),
     url(r'^deprecate/(\d+)/$', views.report_deprecation, name='report_deprecation'),
+    url(r'^submit/(\d+)/$', views.submit_serving, name='submit_serving'),
 ]
