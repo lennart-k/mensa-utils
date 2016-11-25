@@ -129,9 +129,11 @@ def submit_serving(request: HttpRequest, canteen_pk: int) -> HttpResponse:
                 return redirect(reverse('mensautils.canteen:index'))
 
             # save submit
-            Serving.objects.create(
+            serving = Serving.objects.create(
                 dish=dish, canteen=canteen, date=today, price=price,
                 price_staff=price_staff, official=False)
+            ServingVerification.objects.create(
+                user=request.user, reporter=True, serving=serving)
             messages.success(
                 request, 'Das Gericht wurde erfolgreich gespeichert.')
             return redirect(reverse('mensautils.canteen:index'))
