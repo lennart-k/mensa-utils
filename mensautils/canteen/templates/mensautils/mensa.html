@@ -10,99 +10,96 @@
   {% endif %}
 
   <div class="row">
-  {% for day in days %}
-    <div class="col-md-6">
-      <h2>
-        {% if day == today %}
-          Heute
-        {% else %}
-          Morgen
-        {% endif %}
-        ({{ day|date:"l" }})
-      </h2>
-    </div>
-  {% endfor %}
-  </div>
-  {% for canteen, days in mensa_data.items %}
-    <div id="canteen-{{ canteen.pk }}" class="row canteen" data-canteennumber="{{ canteen.pk }}">
-      {% for day, entries in days.items %}
-        <div class="col-md-6">
-          <h3>
-            {{ canteen }}
-            <a class="up-{{ canteen.pk }} move-link" href="javascript:moveCanteen(-1, {{ canteen.pk }});">
-              <span class="glyphicon glyphicon-arrow-up"></span>
-            </a>
-            <a class="down-{{ canteen.pk }} move-link" href="javascript:moveCanteen(1, {{ canteen.pk }});">
-              <span class="glyphicon glyphicon-arrow-down"></span>
-            </a>
-            <a class="delete-{{ canteen.pk }} delete-link" href="javascript:hideCanteen({{ canteen.pk }});">
-              <span class="glyphicon glyphicon-remove"></span>
-            </a>
-          </h3>
-          <table style="width: 100%; max-width: 700px;">
-            <tr>
-              <th style="width: 5%; max-width: 4px;">
-              </th>
-              {% if day == today %}
-                {% if request.user.is_authenticated %}
-                  <th style="width: 5%; max-width: 4px;">
-                  </th>
-                {% endif %}
-                <th style="width: 10%; max-width: 15px;">
-                  Bewertung
-                </th>
-              {% endif %}
-              <th style="width: 15%; max-width: 10px; text-align: right; padding-right: 15px;">
-                Preis
-              </th>
-              <th style="width: 15%; max-width: 10px; text-align: right; padding-right: 15px;">
-                Bed.
-              </th>
-              <th style="text-align: left;">
-                Gericht
-              </th>
-            </tr>
-            {% for entry in entries %}
+    {% for day, canteens in mensa_data.items %}
+      <div class="col-md-6">
+        <h2>
+          {% if day == today %}
+            Heute
+          {% else %}
+            Morgen
+          {% endif %}
+          ({{ day|date:"l" }})
+        </h2>
+        {% for canteen, entries in canteens.items %}
+          <div id="canteen-{% if day == today %}0{% else %}99{% endif %}-{{ canteen.pk }}"
+               class="canteen canteen-{{ canteen.pk }}" data-canteennumber="{{ canteen.pk }}">
+            <h3>
+              {{ canteen }}
+              <a class="up-{{ canteen.pk }} move-link" href="javascript:moveCanteen(-1, {{ canteen.pk }});">
+                <span class="glyphicon glyphicon-arrow-up"></span>
+              </a>
+              <a class="down-{{ canteen.pk }} move-link" href="javascript:moveCanteen(1, {{ canteen.pk }});">
+                <span class="glyphicon glyphicon-arrow-down"></span>
+              </a>
+              <a class="delete-{{ canteen.pk }} delete-link" href="javascript:hideCanteen({{ canteen.pk }});">
+                <span class="glyphicon glyphicon-remove"></span>
+              </a>
+            </h3>
+            <table style="width: 100%; max-width: 700px;">
               <tr>
-                <td style="text-align: center;">
-                  {% if entry.dish.vegetarian %}
-                    <span class="vegetarian">Veg.</span>
-                  {% endif %}
-                </td>
+                <th style="width: 5%; max-width: 4px;">
+                </th>
                 {% if day == today %}
                   {% if request.user.is_authenticated %}
-                    <td style="text-align: right; padding-right: 15px;"
-                      {% if entry.deprecated %}class="deprecated"{% endif %}>
-                      <a href="{% url 'mensautils.canteen:rate_serving' entry.pk %}">Bewerten</a>
-                    </td>
+                    <th style="width: 5%; max-width: 4px;">
+                    </th>
                   {% endif %}
-                  <td style="text-align: center; padding-right: 15px;"
-                    {% if entry.deprecated %}class="deprecated"{% endif %}>
-                    {% if entry.average_rating %}
-                      {{ entry.average_rating|stars }}<br />
-                      ({{ entry.rating_count }} Pers.)
+                  <th style="width: 10%; max-width: 15px;">
+                    Bewertung
+                  </th>
+                {% endif %}
+                <th style="width: 15%; max-width: 10px; text-align: right; padding-right: 15px;">
+                  Preis
+                </th>
+                <th style="width: 15%; max-width: 10px; text-align: right; padding-right: 15px;">
+                  Bed.
+                </th>
+                <th style="text-align: left;">
+                  Gericht
+                </th>
+              </tr>
+              {% for entry in entries %}
+                <tr>
+                  <td style="text-align: center;">
+                    {% if entry.dish.vegetarian %}
+                      <span class="vegetarian">Veg.</span>
                     {% endif %}
                   </td>
-                {% endif %}
-                <td style="text-align: right; padding-right: 15px;"
-                    {% if entry.deprecated %}class="deprecated"{% endif %}>
-                  {{ entry.price }} €
-                </td>
-                <td style="text-align: right; padding-right: 15px;"
-                    {% if entry.deprecated %}class="deprecated"{% endif %}>
-                  {{ entry.price_staff }} €
-                </td>
-                <td style="text-align: left;"
-                  {% if entry.deprecated %}class="deprecated"{% endif %}>
-                  {{ entry.dish.name }}
-                </td>
-              </tr>
-            {% endfor %}
-          </table>
-        </div>
-      {% endfor %}
-    </div>
-  {% endfor %}
+                  {% if day == today %}
+                    {% if request.user.is_authenticated %}
+                      <td style="text-align: right; padding-right: 15px;"
+                          {% if entry.deprecated %}class="deprecated"{% endif %}>
+                        <a href="{% url 'mensautils.canteen:rate_serving' entry.pk %}">Bewerten</a>
+                      </td>
+                    {% endif %}
+                    <td style="text-align: center; padding-right: 15px;"
+                        {% if entry.deprecated %}class="deprecated"{% endif %}>
+                      {% if entry.average_rating %}
+                        {{ entry.average_rating|stars }}<br />
+                        ({{ entry.rating_count }} Pers.)
+                      {% endif %}
+                    </td>
+                  {% endif %}
+                  <td style="text-align: right; padding-right: 15px;"
+                      {% if entry.deprecated %}class="deprecated"{% endif %}>
+                    {{ entry.price }} €
+                  </td>
+                  <td style="text-align: right; padding-right: 15px;"
+                      {% if entry.deprecated %}class="deprecated"{% endif %}>
+                    {{ entry.price_staff }} €
+                  </td>
+                  <td style="text-align: left;"
+                      {% if entry.deprecated %}class="deprecated"{% endif %}>
+                    {{ entry.dish.name }}
+                  </td>
+                </tr>
+              {% endfor %}
+            </table>
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
 
   <hr />
 

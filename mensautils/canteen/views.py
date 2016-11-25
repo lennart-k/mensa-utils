@@ -23,14 +23,13 @@ def index(request: HttpRequest) -> HttpResponse:
         'date', 'canteen__name', 'deprecated', 'dish__name').select_related(
         'dish', 'canteen').annotate(ratings__rating__avg=Avg('ratings__rating'))
     canteen_data = OrderedDict()
+    canteen_data[today] = OrderedDict()
+    canteen_data[tomorrow] = OrderedDict()
     for serving in servings:
-        if serving.canteen not in canteen_data.keys():
-            # initialize days for canteen
-            canteen_data[serving.canteen] = OrderedDict()
-            canteen_data[serving.canteen][today] = []
-            canteen_data[serving.canteen][tomorrow] = []
+        if serving.canteen not in canteen_data[serving.date].keys():
+            canteen_data[serving.date][serving.canteen] = []
 
-        canteen_data[serving.canteen][serving.date].append(serving)
+        canteen_data[serving.date][serving.canteen].append(serving)
     return render(request, 'mensautils/mensa.html', {
         'days': (today, tomorrow),
         'today': today,

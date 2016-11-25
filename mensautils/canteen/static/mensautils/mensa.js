@@ -1,4 +1,6 @@
 (function(){
+  var DAYS = [0, 99];
+
   /**
    * Get canteen order from DOM
    */
@@ -160,11 +162,13 @@
     }
 
     // Place all canteens starting by second behind its predecessor
-    for (var i = 1; i < canteenOrder.length; i++) {
-        var previousCanteen = $('#canteen-' + canteenOrder[i - 1]);
-        var canteen = $('#canteen-' + canteenOrder[i]);
+    $.each(DAYS, function(index, day) {
+      for (var i = 1; i < canteenOrder.length; i++) {
+        var previousCanteen = $('#canteen-' + day + '-' + canteenOrder[i - 1]);
+        var canteen = $('#canteen-' + day + '-' + canteenOrder[i]);
         canteen.insertAfter(previousCanteen);
-    }
+      }
+    });
 
     hideUnnecessaryCanteenButtons(canteenOrder);
     hideHiddenCanteens();
