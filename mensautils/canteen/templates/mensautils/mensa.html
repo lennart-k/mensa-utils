@@ -93,6 +93,8 @@
                     {{ entry.dish.name }}
                   </td>
                 </tr>
+              {% empty %}
+                <td colspan="5"><em>Keine Daten.</em></td>
               {% endfor %}
             </table>
           </div>

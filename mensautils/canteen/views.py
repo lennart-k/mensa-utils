@@ -22,9 +22,18 @@ def index(request: HttpRequest) -> HttpResponse:
     servings = Serving.objects.filter(date__gte=today, date__lte=tomorrow).order_by(
         'date', 'canteen__name', 'deprecated', 'dish__name').select_related(
         'dish', 'canteen').annotate(ratings__rating__avg=Avg('ratings__rating'))
+
     canteen_data = OrderedDict()
     canteen_data[today] = OrderedDict()
     canteen_data[tomorrow] = OrderedDict()
+
+    # fetch canteens explicitly to prevent canteens from not being displayed
+    # when there is no data for a day
+    canteens = Canteen.objects.order_by('name')
+    for canteen in canteens:
+        canteen_data[today][canteen] = []
+        canteen_data[tomorrow][canteen] = []
+
     for serving in servings:
         if serving.canteen not in canteen_data[serving.date].keys():
             canteen_data[serving.date][serving.canteen] = []
