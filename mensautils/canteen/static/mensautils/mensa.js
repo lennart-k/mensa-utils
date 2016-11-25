@@ -1,6 +1,4 @@
 (function(){
-  var DAYS = [0, 99];
-
   /**
    * Get canteen order from DOM
    */
@@ -9,7 +7,7 @@
     $('.canteen').each(function(key, elem) {
       var number = $(elem).data('canteennumber');
       if (canteens.indexOf(number) >= 0) {
-        return false; // break
+        return; // continue
       }
       canteens.push(number);
     });
@@ -169,14 +167,12 @@
       return false;  // don't do anything (except for hiding unnecessary buttons)
     }
 
-    $.each(DAYS, function(key, day) {
-      // Place all canteens starting by second behind its predecessor
-      for (var i = 1; i < canteenOrder.length; i++) {
-          var previousCanteen = $('#canteen-' + day + '-' + canteenOrder[i - 1]);
-          var canteen = $('#canteen-' + day + '-' + canteenOrder[i]);
-          canteen.insertAfter(previousCanteen);
-      }
-    });
+    // Place all canteens starting by second behind its predecessor
+    for (var i = 1; i < canteenOrder.length; i++) {
+        var previousCanteen = $('#canteen-' + canteenOrder[i - 1]);
+        var canteen = $('#canteen-' + canteenOrder[i]);
+        canteen.insertAfter(previousCanteen);
+    }
 
     hideUnnecessaryCanteenButtons(canteenOrder);
     hideHiddenCanteens();
@@ -203,7 +199,7 @@
       $('#showHiddenCanteensLink').hide();
     }
     $.each(hiddenCanteens, function(key, canteenNumber) {
-      $('.canteen-' + canteenNumber).hide();
+      $('#canteen-' + canteenNumber).hide();
     });
   }
 

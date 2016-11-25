@@ -20,16 +20,19 @@ def index(request: HttpRequest) -> HttpResponse:
     today = date.today()
     tomorrow = today + timedelta(days=1)
     servings = Serving.objects.filter(date__gte=today, date__lte=tomorrow).order_by(
-        'canteen__name', 'date', 'deprecated', 'dish__name').select_related(
+        'date', 'canteen__name', 'deprecated', 'dish__name').select_related(
         'dish', 'canteen').annotate(ratings__rating__avg=Avg('ratings__rating'))
     canteen_data = OrderedDict()
-    canteen_data[today] = OrderedDict()
-    canteen_data[tomorrow] = OrderedDict()
     for serving in servings:
-        if serving.canteen.name not in canteen_data[serving.date]:
-            canteen_data[serving.date][serving.canteen.name] = []
-        canteen_data[serving.date][serving.canteen.name].append(serving)
+        if serving.canteen not in canteen_data.keys():
+            # initialize days for canteen
+            canteen_data[serving.canteen] = OrderedDict()
+            canteen_data[serving.canteen][today] = []
+            canteen_data[serving.canteen][tomorrow] = []
+
+        canteen_data[serving.canteen][serving.date].append(serving)
     return render(request, 'mensautils/mensa.html', {
+        'days': (today, tomorrow),
         'today': today,
         'mensa_data': canteen_data,
         'last_updated': Serving.objects.aggregate(
