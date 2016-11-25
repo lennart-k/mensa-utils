@@ -195,7 +195,7 @@
       $('#showHiddenCanteensLink').hide();
     }
     $.each(hiddenCanteens, function(key, canteenNumber) {
-      $('#canteen-' + canteenNumber).hide();
+      $('.canteen-' + canteenNumber).hide();
     });
   }
 
@@ -204,7 +204,7 @@
    * is wide enough.
    */
   function updateResponsiveHeights() {
-    if ($(window).width() < 921) {
+    if ($(window).width() < 992) {
       // screen is too narrow, set all heights to auto
       $('.canteen').css('height', 'auto');
     } else {
