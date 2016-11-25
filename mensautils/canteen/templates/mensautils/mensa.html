@@ -42,13 +42,15 @@
             <tr>
               <th style="width: 5%; max-width: 4px;">
               </th>
-              {% if request.user.is_authenticated %}
-                <th style="width: 5%; max-width: 4px;">
+              {% if day == today %}
+                {% if request.user.is_authenticated %}
+                  <th style="width: 5%; max-width: 4px;">
+                  </th>
+                {% endif %}
+                <th style="width: 10%; max-width: 15px;">
+                  Bewertung
                 </th>
               {% endif %}
-              <th style="width: 10%; max-width: 15px;">
-                Bewertung
-              </th>
               <th style="width: 15%; max-width: 10px; text-align: right; padding-right: 15px;">
                 Preis
               </th>
@@ -66,17 +68,19 @@
                     <span style="color: #76a93b;">Veg.</span>
                   {% endif %}
                 </td>
-                {% if request.user.is_authenticated %}
-                  <td style="text-align: right; padding-right: 15px;{% if entry.deprecated %} color: #c9c9c9;{% endif %}">
-                    <a href="{% url 'mensautils.canteen:rate_serving' entry.pk %}">Bewerten</a>
+                {% if day == today %}
+                  {% if request.user.is_authenticated %}
+                    <td style="text-align: right; padding-right: 15px;{% if entry.deprecated %} color: #c9c9c9;{% endif %}">
+                      <a href="{% url 'mensautils.canteen:rate_serving' entry.pk %}">Bewerten</a>
+                    </td>
+                  {% endif %}
+                  <td style="text-align: center; padding-right: 15px;{% if entry.deprecated %} color: #c9c9c9;{% endif %}">
+                    {% if entry.average_rating %}
+                      {{ entry.average_rating }}/5<br />
+                      ({{ entry.rating_count }} Pers.)
+                    {% endif %}
                   </td>
                 {% endif %}
-                <td style="text-align: center; padding-right: 15px;{% if entry.deprecated %} color: #c9c9c9;{% endif %}">
-                  {% if entry.average_rating %}
-                    {{ entry.average_rating }}/5<br />
-                    ({{ entry.rating_count }} Pers.)
-                  {% endif %}
-                </td>
                 <td style="text-align: right; padding-right: 15px;{% if entry.deprecated %} color: #c9c9c9;{% endif %}">
                   {{ entry.price }} €
                 </td>

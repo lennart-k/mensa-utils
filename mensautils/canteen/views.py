@@ -54,6 +54,12 @@ def stats(request: HttpRequest) -> HttpResponse:
 def rate_serving(request: HttpRequest, serving_pk: int) -> HttpResponse:
     serving = get_object_or_404(Serving, pk=serving_pk)
 
+    # check that serving is from today
+    if serving.date != date.today():
+        messages.warning(
+            request, 'Du kannst dieses Gericht heute nicht bewerten.')
+        return redirect(reverse('mensautils.canteen:index'))
+
     # check if user has rated this serving already
     if Rating.objects.filter(serving=serving, user=request.user).count() > 0:
         messages.warning(
