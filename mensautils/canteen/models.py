@@ -58,12 +58,23 @@ class Serving(models.Model):
             return self.ratings__count
         return self.ratings.count()
 
+    def verifications_count(self):
+        if hasattr(self, 'verifications__count'):
+            return self.verifications__count
+        else:
+            return self.verifications.count
+
     def deprecation_reports_count(self):
         if hasattr(self, 'deprecation_reports__count'):
             return self.deprecation_reports__count
         else:
             return self.aggregate(
                 Count('deprecation_reports'))['deprecation_reports__count']
+
+    @property
+    def verified(self) -> bool:
+        return (self.official or
+                self.verifications_count() >= settings.MIN_REPORTS)
 
     @property
     def deprecated(self) -> bool:
@@ -103,3 +114,15 @@ class InofficialDeprecation(models.Model):
 
     def __str__(self):
         return '{}: {}'.format(self.reporter, self.serving)
+
+
+class ServingVerification(models.Model):
+    """Verification for inofficial servings."""
+    class Meta:
+        unique_together = ['serving', 'user']
+    serving = models.ForeignKey(
+        Serving, on_delete=models.CASCADE, related_name='verifications')
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+        related_name='serving_verifications')
+    reporter = models.BooleanField(default=False)

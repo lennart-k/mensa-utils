@@ -12,7 +12,7 @@ from django.urls import reverse
 
 from mensautils.canteen.forms import RateForm, SubmitServingForm
 from mensautils.canteen.models import Canteen, Serving, Rating, InofficialDeprecation, \
-    Dish
+    Dish, ServingVerification
 from mensautils.canteen.statistics import get_most_frequent_dishes, \
     get_most_favored_dishes
 
@@ -24,6 +24,7 @@ def index(request: HttpRequest) -> HttpResponse:
         'dish', 'canteen').annotate(
         ratings__rating__avg=Avg('ratings__rating'),
         ratings__count=Count('ratings'),
+        verifications__count=Count('verifications'),
         deprecation_reports__count=Count('deprecation_reports')).order_by(
         'date', 'canteen__name', 'officially_deprecated', 'deprecation_reports__count',
         'dish__name')
@@ -143,6 +144,37 @@ def submit_serving(request: HttpRequest, canteen_pk: int) -> HttpResponse:
 
 
 @login_required
+def verify_serving(request: HttpRequest, serving_pk: int) -> HttpResponse:
+    serving = get_object_or_404(Serving, pk=serving_pk)
+
+    # check that serving is from today
+    if serving.date != date.today():
+        messages.warning(
+            request, 'Der Eintrag ist nicht von heute. Daher kann er nicht bestätigt '
+                     'werden.')
+        return redirect(reverse('mensautils.canteen:index'))
+
+    # check if user has verified this serving already
+    if ServingVerification.objects.filter(
+            serving=serving, user=request.user).count() > 0:
+        messages.warning(
+            request, 'Du hast dieses Gericht bereits bestätigt.')
+        return redirect(reverse('mensautils.canteen:index'))
+
+    if request.method == 'POST':
+        # save rating
+        ServingVerification.objects.create(user=request.user, serving=serving)
+        messages.success(
+            request, 'Die Gericht wurde erfolgreich bestätigt.')
+        return redirect(reverse('mensautils.canteen:index'))
+
+    return render(
+        request, 'mensautils/verify_serving.html', {
+            'serving': serving,
+        })
+
+
+@login_required
 def report_deprecation(request: HttpRequest, serving_pk: int) -> HttpResponse:
     serving = get_object_or_404(Serving, pk=serving_pk)
 
@@ -160,7 +192,6 @@ def report_deprecation(request: HttpRequest, serving_pk: int) -> HttpResponse:
             request, 'Du hast dieses Gericht bereits als falsch gemeldet.')
         return redirect(reverse('mensautils.canteen:index'))
 
-    form = RateForm()
     if request.method == 'POST':
         # save rating
         InofficialDeprecation.objects.create(reporter=request.user, serving=serving)

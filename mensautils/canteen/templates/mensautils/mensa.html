@@ -67,11 +67,11 @@
                   </td>
                   {% if day == today %}
                     <td style="text-align: right; padding-right: 15px;"
-                        {% if entry.deprecated %}class="deprecated"{% endif %}>
+                        {% if entry.deprecated %}class="deprecated"{% elif not entry.verified %}class="unverified"{% endif %}>
                       <a href="{% url 'mensautils.canteen:rate_serving' entry.pk %}">Bewerten</a>
                     </td>
                     <td style="text-align: center; padding-right: 15px;"
-                        {% if entry.deprecated %}class="deprecated"{% endif %}>
+                        {% if entry.deprecated %}class="deprecated"{% elif not entry.verified %}class="unverified"{% endif %}>
                       {% if entry.average_rating %}
                         {{ entry.average_rating|stars }}<br />
                         ({{ entry.rating_count }} Pers.)
@@ -79,24 +79,31 @@
                     </td>
                   {% endif %}
                   <td style="text-align: right; padding-right: 15px;"
-                      {% if entry.deprecated %}class="deprecated"{% endif %}>
+                      {% if entry.deprecated %}class="deprecated"{% elif not entry.verified %}class="unverified"{% endif %}>
                     {{ entry.price }} €
                   </td>
                   <td style="text-align: right; padding-right: 15px;"
-                      {% if entry.deprecated %}class="deprecated"{% endif %}>
+                      {% if entry.deprecated %}class="deprecated"{% elif not entry.verified %}class="unverified"{% endif %}>
                     {{ entry.price_staff }} €
                   </td>
                   <td style="text-align: left;"
-                      {% if entry.deprecated %}class="deprecated"{% endif %}>
+                      {% if entry.deprecated %}class="deprecated"{% elif not entry.verified %}class="unverified"{% endif %}>
                     {{ entry.dish.name }}
                     {% if entry.maybe_deprecated %}
                       <span title="Mindestens ein Nutzer hat dieses Gericht als nicht verfügbar gemeldet.">
                         <em>(???)</em>
                       </span>
                     {% endif %}
-                    <a href="{% url 'mensautils.canteen:report_deprecation' entry.pk %}">
-                      <span class="glyphicon glyphicon-remove"></span>
-                    </a>
+                    {% if entry.date == today %}
+                      <a href="{% url 'mensautils.canteen:report_deprecation' entry.pk %}">
+                        <span class="glyphicon glyphicon-remove"></span>
+                      </a>
+                      {% if not entry.official %}
+                        <a href="{% url 'mensautils.canteen:verify_serving' entry.pk %}">
+                          <span class="glyphicon glyphicon-ok"></span>
+                        </a>
+                      {% endif %}
+                    {% endif %}
                   </td>
                 </tr>
               {% empty %}

@@ -1,0 +1,21 @@
+{% extends 'mensautils/base.html' %}
+{% load static %}
+
+{% block content %}
+  <h1>Mensa-Speisepläne der Uni Hamburg</h1>
+
+  {% if request.user.is_authenticated %}
+    <p>Hallo, <em>{{ request.user.username }}</em>.</p>
+  {% endif %}
+
+  <form method="POST" action="{{ request.get_full_path }}">
+    {% csrf_token %}
+    <p>
+      Möchtest Du das von einem Nutzer hinzugefügte Gericht
+      <strong>{{ serving.dish.name }}</strong> in der Mensa
+      <em>{{ serving.canteen.name }}</em> wirklich bestätigen?
+    </p>
+
+    <input type="submit" value="Gericht bestätigen" />
+  </form>
+{% endblock content %}
