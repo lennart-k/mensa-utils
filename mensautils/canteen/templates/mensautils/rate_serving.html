@@ -15,13 +15,36 @@
       in der Mensa <em>{{ serving.canteen.name }}</em>.
     </p>
 
-    <table>
-    {{ form }}
-    </table>
+    <ul>
+      <li>
+        <input id="rating_1" name="rating" type="radio" value="1" />
+        <label for="rating_1">&#x2605;</label>
+      </li>
+      <li>
+        <input id="rating_2" name="rating" type="radio" value="2" />
+        <label for="rating_2">&#x2605;&#x2605;</label>
+      </li>
+      <li>
+        <input id="rating_3" name="rating" type="radio" value="3" />
+        <label for="rating_3">&#x2605;&#x2605;&#x2605;</label>
+      </li>
+      <li>
+        <input id="rating_4" name="rating" type="radio" value="4" />
+        <label for="rating_4">&#x2605;&#x2605;&#x2605;&#x2605;</label>
+      </li>
+      <li>
+        <input id="rating_5" name="rating" type="radio" value="5" />
+        <label for="rating_5">&#x2605;&#x2605;&#x2605;&#x2605;&#x2605;</label>
+      </li>
+    </ul>
+    <p>
+      {% for error in form.rating.errors %}
+        {{ error }}<br />
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+        {{ error }}<br />
+      {% endfor %}
+    </p>
     <input type="submit" value="Bewerten" />
   </form>
 {% endblock content %}
-
-{% block additional_css %}
-  <link rel="stylesheet" href="{% static 'mensautils/css/rate_serving.css' %}">
-{% endblock additional_css %}

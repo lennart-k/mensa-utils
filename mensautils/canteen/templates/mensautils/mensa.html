@@ -1,5 +1,6 @@
 {% extends 'mensautils/base.html' %}
 {% load static %}
+{% load rating %}
 
 {% block content %}
   <h1>Mensa-Speisepläne der Uni Hamburg</h1>
@@ -78,7 +79,7 @@
                   <td style="text-align: center; padding-right: 15px;"
                     {% if entry.deprecated %}class="deprecated"{% endif %}>
                     {% if entry.average_rating %}
-                      {{ entry.average_rating }}/5<br />
+                      {{ entry.average_rating|stars }}<br />
                       ({{ entry.rating_count }} Pers.)
                     {% endif %}
                   </td>
