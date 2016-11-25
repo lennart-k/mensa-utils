@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Fetch and display canteen plans."""
 import re
-from collections import Generator
 from datetime import date, datetime
+from typing import Generator
 
 import requests
 
