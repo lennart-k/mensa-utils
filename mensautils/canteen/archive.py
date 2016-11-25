@@ -27,11 +27,11 @@ def store_canteen_data(day: datetime.date, canteen_name: str, dishes: dict):
             price_staff=price_staff)
         if not created:
             serving.last_updated = now
-            serving.deprecated = False
+            serving.officially_deprecated = False
             serving.official = True
             serving.save()
 
     # mark old dishes for same day and canteen as deprecated
     Serving.objects.filter(
         date=day, canteen=canteen, last_updated__lt=now, official=True).update(
-        deprecated=True)
+        officially_deprecated=True)
