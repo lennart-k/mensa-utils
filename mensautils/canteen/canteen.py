@@ -1,29 +1,41 @@
 #!/usr/bin/env python3
 """Fetch and display canteen plans."""
 import re
-from datetime import date
+from collections import Generator
+from datetime import date, datetime
 
 import requests
 
 
-def fetch_canteen(day: date, canteen_link: str) -> dict:
-    """Generate output."""
-    today = date.today()
-    day_param = 99
-    if day == today:
-        day_param = 0
-    return fetch_plan(canteen_link.format(day.year, day_param))
+def fetch_canteen(day_param: int, canteen_link: str) -> (date, Generator):
+    """Generate output. day_param should be the number used by upstream."""
+    return get_plan_data(canteen_link.format(date.today().year, day_param))
 
 
-def fetch_plan(url):
-    """Fetch and parse a plan."""
-    plan = requests.get(url)
+def get_plan_data(url) -> (date, Generator):
+    """Fetch plan and get data."""
+    plan = fetch_plan(url)
+
+    return parse_plan_date(plan), parse_plan_foods(plan)
+
+
+def parse_plan_date(plan: str) -> date:
+    """Parse the plan date."""
+    pattern = re.compile(r'\d{1,2}\.\d{1,2}\.\d{4}')
+    # TODO: ensure that there has been a match
+    plan_date_str = pattern.search(plan).group(0)
+    plan_date = datetime.strptime(plan_date_str, '%d.%m.%Y').date()
+    return plan_date
+
+
+def parse_plan_foods(plan: str) -> Generator:
+    """Parse a plan. Additionally return the date of the plan."""
 
     pattern = re.compile(
         r'class="dish-description">(.*?)</td>.*?(\d+,\d+).*?(\d+,\d+)',
         flags=re.DOTALL)
 
-    foods = pattern.findall(plan.text)
+    foods = pattern.findall(plan)
 
     # remove unnecessary things from foods
     patterns = [
@@ -56,6 +68,11 @@ def fetch_plan(url):
             'price_staff': price_staff,
             'title': replaced,
         }
+
+
+def fetch_plan(url) -> str:
+    """Fetch raw plan data."""
+    return requests.get(url).text
 
 
 def remove_nested_brackets(string):

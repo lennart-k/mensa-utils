@@ -13,10 +13,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Update the cache."""
-        today = date.today()
+        days = [0, 99]
 
-        for day in (today, today + timedelta(days=1)):
+        for day in days:
             for canteen_name, canteen_url in settings.CANTEENS:
-                canteen_data = fetch_canteen(day, canteen_url)
+                canteen_date, canteen_foods = fetch_canteen(day, canteen_url)
                 store_canteen_data(
-                    day, canteen_name, canteen_data)
+                    canteen_date, canteen_name, canteen_foods)
