@@ -89,6 +89,14 @@
                   <td style="text-align: left;"
                       {% if entry.deprecated %}class="deprecated"{% endif %}>
                     {{ entry.dish.name }}
+                    {% if entry.maybe_deprecated %}
+                      <span title="Mindestens ein Nutzer hat dieses Gericht als nicht verfügbar gemeldet.">
+                        <em>(???)</em>
+                      </span>
+                    {% endif %}
+                    <a href="{% url 'mensautils.canteen:report_deprecation' entry.pk %}">
+                      <span class="glyphicon glyphicon-remove"></span>
+                    </a>
                   </td>
                 </tr>
               {% empty %}

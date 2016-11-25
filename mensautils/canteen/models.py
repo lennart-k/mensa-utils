@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django.db.models import Avg
+from django.db.models import Avg, Count
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from fuzzywuzzy import fuzz
@@ -39,7 +39,7 @@ class Serving(models.Model):
     price_staff = models.DecimalField(max_digits=4, decimal_places=2)
 
     last_updated = models.DateTimeField(default=timezone.now)
-    deprecated = models.BooleanField(default=False)
+    officially_deprecated = models.BooleanField(default=False)
 
     def __str__(self):
         return '{}: {} ({}, {})'.format(self.canteen, str(self.dish), str(self.date),
@@ -53,7 +53,27 @@ class Serving(models.Model):
 
     def rating_count(self) -> int:
         """Get rating count."""
+        if hasattr(self, 'ratings__count'):
+            return self.ratings__count
         return self.ratings.count()
+
+    def deprecation_reports_count(self):
+        if hasattr(self, 'deprecation_reports__count'):
+            return self.deprecation_reports__count
+        else:
+            return self.aggregate(
+                Count('deprecation_reports'))['deprecation_reports__count']
+
+    @property
+    def deprecated(self) -> bool:
+        return (self.officially_deprecated or
+                self.deprecation_reports_count() >= settings.MIN_REPORTS)
+
+    @property
+    def maybe_deprecated(self) -> bool:
+        """Maybe deprecated when at least one user has reported serving."""
+        reports = self.deprecation_reports_count()
+        return reports >= 1
 
 
 class Rating(models.Model):
@@ -68,3 +88,17 @@ class Rating(models.Model):
 
     def __str__(self):
         return '{}: {} ({})'.format(self.rating, str(self.serving), self.user)
+
+
+class InofficialDeprecation(models.Model):
+    """Deprecation reported by users."""
+    class Meta:
+        unique_together = [('serving', 'reporter')]
+    serving = models.ForeignKey(
+        Serving, on_delete=models.CASCADE, related_name='deprecation_reports')
+    reporter = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+        related_name='deprecation_reports')
+
+    def __str__(self):
+        return '{}: {}'.format(self.reporter, self.serving)

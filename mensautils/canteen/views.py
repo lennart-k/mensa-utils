@@ -4,14 +4,14 @@ from datetime import date, timedelta
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Max, Avg
+from django.db.models import Max, Avg, Count
 from django.http import HttpRequest
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 
 from mensautils.canteen.forms import RateForm
-from mensautils.canteen.models import Canteen, Serving, Rating
+from mensautils.canteen.models import Canteen, Serving, Rating, InofficialDeprecation
 from mensautils.canteen.statistics import get_most_frequent_dishes, \
     get_most_favored_dishes
 
@@ -19,9 +19,13 @@ from mensautils.canteen.statistics import get_most_frequent_dishes, \
 def index(request: HttpRequest) -> HttpResponse:
     today = date.today()
     tomorrow = today + timedelta(days=1)
-    servings = Serving.objects.filter(date__gte=today, date__lte=tomorrow).order_by(
-        'date', 'canteen__name', 'deprecated', 'dish__name').select_related(
-        'dish', 'canteen').annotate(ratings__rating__avg=Avg('ratings__rating'))
+    servings = Serving.objects.filter(date__gte=today, date__lte=tomorrow).select_related(
+        'dish', 'canteen').annotate(
+        ratings__rating__avg=Avg('ratings__rating'),
+        ratings__count=Count('ratings'),
+        deprecation_reports__count=Count('deprecation_reports')).order_by(
+        'date', 'canteen__name', 'officially_deprecated', 'deprecation_reports__count',
+        'dish__name')
 
     canteen_data = OrderedDict()
     canteen_data[today] = OrderedDict()
@@ -97,4 +101,38 @@ def rate_serving(request: HttpRequest, serving_pk: int) -> HttpResponse:
         request, 'mensautils/rate_serving.html', {
             'serving': serving,
             'form': form,
+        })
+
+
+@login_required
+def report_deprecation(request: HttpRequest, serving_pk: int) -> HttpResponse:
+    serving = get_object_or_404(Serving, pk=serving_pk)
+
+    # check that serving is from today
+    if serving.date != date.today():
+        messages.warning(
+            request, 'Der Eintrag ist nicht von heute. Daher kann er nicht als '
+                     'falsch markiert werden.')
+        return redirect(reverse('mensautils.canteen:index'))
+
+    # check if user has reported this serving already
+    if InofficialDeprecation.objects.filter(
+            serving=serving, reporter=request.user).count() > 0:
+        messages.warning(
+            request, 'Du hast dieses Gericht bereits als falsch gemeldet.')
+        return redirect(reverse('mensautils.canteen:index'))
+
+    form = RateForm()
+    if request.method == 'POST':
+        # save rating
+        InofficialDeprecation.objects.create(reporter=request.user, serving=serving)
+        messages.success(
+            request, 'Die Meldung wurde erfolgreich gespeichert. Sobald mindestens '
+                     '{} Nutzer das Gericht gemeldet haben, wird es als veraltert '
+                     'angesehen.'.format(settings.MIN_REPORTS))
+        return redirect(reverse('mensautils.canteen:index'))
+
+    return render(
+        request, 'mensautils/report_deprecation.html', {
+            'serving': serving,
         })
