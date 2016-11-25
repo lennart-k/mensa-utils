@@ -65,29 +65,34 @@
               <tr>
                 <td style="text-align: center;">
                   {% if entry.dish.vegetarian %}
-                    <span style="color: #76a93b;">Veg.</span>
+                    <span class="vegetarian">Veg.</span>
                   {% endif %}
                 </td>
                 {% if day == today %}
                   {% if request.user.is_authenticated %}
-                    <td style="text-align: right; padding-right: 15px;{% if entry.deprecated %} color: #c9c9c9;{% endif %}">
+                    <td style="text-align: right; padding-right: 15px;"
+                      {% if entry.deprecated %}class="deprecated"{% endif %}>
                       <a href="{% url 'mensautils.canteen:rate_serving' entry.pk %}">Bewerten</a>
                     </td>
                   {% endif %}
-                  <td style="text-align: center; padding-right: 15px;{% if entry.deprecated %} color: #c9c9c9;{% endif %}">
+                  <td style="text-align: center; padding-right: 15px;"
+                    {% if entry.deprecated %}class="deprecated"{% endif %}>
                     {% if entry.average_rating %}
                       {{ entry.average_rating }}/5<br />
                       ({{ entry.rating_count }} Pers.)
                     {% endif %}
                   </td>
                 {% endif %}
-                <td style="text-align: right; padding-right: 15px;{% if entry.deprecated %} color: #c9c9c9;{% endif %}">
+                <td style="text-align: right; padding-right: 15px;"
+                    {% if entry.deprecated %}class="deprecated"{% endif %}>
                   {{ entry.price }} €
                 </td>
-                <td style="text-align: right; padding-right: 15px;{% if entry.deprecated %} color: #c9c9c9;{% endif %}">
+                <td style="text-align: right; padding-right: 15px;"
+                    {% if entry.deprecated %}class="deprecated"{% endif %}>
                   {{ entry.price_staff }} €
                 </td>
-                <td style="text-align: left;{% if entry.deprecated %} color: #c9c9c9;{% endif %}">
+                <td style="text-align: left;"
+                  {% if entry.deprecated %}class="deprecated"{% endif %}>
                   {{ entry.dish.name }}
                 </td>
               </tr>
@@ -97,6 +102,16 @@
       {% endfor %}
     </div>
   {% endfor %}
+
+  <hr />
+
+  <h4>Legende</h4>
+  <p>
+    <span class="vegetarian">Veg.</span> vegetarisch/vegan<br />
+    <span class="deprecated">Gericht wurde aus dem Speiseplan entfernt</span>
+  </p>
+
+  <hr />
 
   <p id="showHiddenCanteensLink"><a href="javascript:showHiddenCanteens();">Ausgeblendete Mensen wieder einblenden</a></p>
   <p>
@@ -113,3 +128,6 @@
 {% block additional_js %}
   <script type="text/javascript" src="{% static 'mensautils/mensa.js' %}"></script>
 {% endblock additional_js %}
+{% block additional_css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'mensautils/css/index.css' %}" />
+{% endblock additional_css %}
