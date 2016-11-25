@@ -66,12 +66,10 @@
                     {% endif %}
                   </td>
                   {% if day == today %}
-                    {% if request.user.is_authenticated %}
-                      <td style="text-align: right; padding-right: 15px;"
-                          {% if entry.deprecated %}class="deprecated"{% endif %}>
-                        <a href="{% url 'mensautils.canteen:rate_serving' entry.pk %}">Bewerten</a>
-                      </td>
-                    {% endif %}
+                    <td style="text-align: right; padding-right: 15px;"
+                        {% if entry.deprecated %}class="deprecated"{% endif %}>
+                      <a href="{% url 'mensautils.canteen:rate_serving' entry.pk %}">Bewerten</a>
+                    </td>
                     <td style="text-align: center; padding-right: 15px;"
                         {% if entry.deprecated %}class="deprecated"{% endif %}>
                       {% if entry.average_rating %}
