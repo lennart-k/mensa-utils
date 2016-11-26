@@ -1,6 +1,7 @@
 {% extends 'mensautils/base.html' %}
 {% load static %}
 {% load rating %}
+{% load canteen %}
 
 {% block content %}
   <h1>Mensa-Speisepläne der Uni Hamburg</h1>
@@ -13,12 +14,7 @@
     {% for day, canteens in mensa_data.items %}
       <div class="col-md-6">
         <h2>
-          {% if day == today %}
-            Heute
-          {% else %}
-            Morgen
-          {% endif %}
-          ({{ day|date:"l" }})
+          {{ day|day_description }}
         </h2>
         {% for canteen, entries in canteens.items %}
           <div id="canteen-{% if day == today %}0{% else %}99{% endif %}-{{ canteen.pk }}"

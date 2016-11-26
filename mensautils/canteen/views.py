@@ -18,9 +18,12 @@ from mensautils.canteen.statistics import get_most_frequent_dishes, \
 
 
 def index(request: HttpRequest) -> HttpResponse:
-    today = date.today()
-    tomorrow = today + timedelta(days=1)
-    servings = Serving.objects.filter(date__gte=today, date__lte=tomorrow).select_related(
+    today_date = date.today()
+    today = _get_valid_day(today_date)
+    next_day = _get_valid_day(today + timedelta(days=1))
+    servings = (Serving.objects.filter(date=today) |
+                Serving.objects.filter(date=next_day))
+    servings = servings.select_related(
         'dish', 'canteen').annotate(
         ratings__rating__avg=Avg('ratings__rating'),
         ratings__count=Count('ratings'),
@@ -31,14 +34,14 @@ def index(request: HttpRequest) -> HttpResponse:
 
     canteen_data = OrderedDict()
     canteen_data[today] = OrderedDict()
-    canteen_data[tomorrow] = OrderedDict()
+    canteen_data[next_day] = OrderedDict()
 
     # fetch canteens explicitly to prevent canteens from not being displayed
     # when there is no data for a day
     canteens = Canteen.objects.order_by('name')
     for canteen in canteens:
         canteen_data[today][canteen] = []
-        canteen_data[tomorrow][canteen] = []
+        canteen_data[next_day][canteen] = []
 
     for serving in servings:
         if serving.canteen not in canteen_data[serving.date].keys():
@@ -46,7 +49,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
         canteen_data[serving.date][serving.canteen].append(serving)
     return render(request, 'mensautils/mensa.html', {
-        'days': (today, tomorrow),
+        'days': (today, next_day),
         'today': today,
         'mensa_data': canteen_data,
         'last_updated': Serving.objects.aggregate(
@@ -207,3 +210,10 @@ def report_deprecation(request: HttpRequest, serving_pk: int) -> HttpResponse:
         request, 'mensautils/report_deprecation.html', {
             'serving': serving,
         })
+
+
+def _get_valid_day(base_day: date) -> date:
+    """Get the next valid day (i.e. skip sunday)"""
+    if base_day.weekday() == 6:
+        return base_day + timedelta(days=1)
+    return base_day
