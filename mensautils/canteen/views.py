@@ -18,10 +18,10 @@ from mensautils.canteen.statistics import get_most_frequent_dishes, \
 
 
 def index(request: HttpRequest) -> HttpResponse:
-    today_date = date.today()
-    today = _get_valid_day(today_date)
-    next_day = _get_valid_day(today + timedelta(days=1))
-    servings = (Serving.objects.filter(date=today) |
+    today = date.today()
+    first_day = _get_valid_day(today)
+    next_day = _get_valid_day(first_day + timedelta(days=1))
+    servings = (Serving.objects.filter(date=first_day) |
                 Serving.objects.filter(date=next_day))
     servings = servings.select_related(
         'dish', 'canteen').annotate(
@@ -33,14 +33,14 @@ def index(request: HttpRequest) -> HttpResponse:
         'dish__name')
 
     canteen_data = OrderedDict()
-    canteen_data[today] = OrderedDict()
+    canteen_data[first_day] = OrderedDict()
     canteen_data[next_day] = OrderedDict()
 
     # fetch canteens explicitly to prevent canteens from not being displayed
     # when there is no data for a day
     canteens = Canteen.objects.order_by('name')
     for canteen in canteens:
-        canteen_data[today][canteen] = []
+        canteen_data[first_day][canteen] = []
         canteen_data[next_day][canteen] = []
 
     for serving in servings:
@@ -49,7 +49,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
         canteen_data[serving.date][serving.canteen].append(serving)
     return render(request, 'mensautils/mensa.html', {
-        'days': (today, next_day),
+        'days': (first_day, next_day),
         'today': today,
         'mensa_data': canteen_data,
         'last_updated': Serving.objects.aggregate(
