@@ -126,3 +126,21 @@ class ServingVerification(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
         related_name='serving_verifications')
     reporter = models.BooleanField(default=False)
+
+    def __str__(self):
+        return '{} ({})'.format(self.serving, self.user)
+
+
+class Notification(models.Model):
+    """Notification for user to send."""
+    class Meta:
+        unique_together = ['user', 'pattern']
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+        related_name='notifications')
+    pattern = models.CharField(max_length=300)
+
+    added = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return '{} ({})'.format(self.pattern, self.user)

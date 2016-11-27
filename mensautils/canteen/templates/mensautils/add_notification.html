@@ -1,0 +1,34 @@
+{% extends 'mensautils/base.html' %}
+{% load static %}
+
+{% block content %}
+  <h1>Mensa-Speisepläne der Uni Hamburg</h1>
+
+  {% if request.user.is_authenticated %}
+    <p>Hallo, <em>{{ request.user.username }}</em>.</p>
+  {% endif %}
+
+  <form method="POST" action="{{ request.get_full_path }}">
+    {% csrf_token %}
+
+    <p>Wähle eine Suchregel, anhand der Du Benachrichtigungen erhalten möchtest.</p>
+
+    {{ form.pattern }}
+
+    <p>
+      {% for error in form.pattern.errors %}
+        {{ error }}<br />
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+        {{ error }}<br />
+      {% endfor %}
+    </p>
+
+    <input type="submit" value="Benachrichtigung hinzufügen" />
+  </form>
+
+  <p>
+    <a href="{% url 'mensautils.canteen:index' %}">Startseite</a> &bull;
+    <a href="{% url 'mensautils.canteen:notification' %}">Benachrichtigungen</a>
+  </p>
+{% endblock content %}

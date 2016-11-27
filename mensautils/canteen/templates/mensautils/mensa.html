@@ -131,6 +131,7 @@
   <hr />
 
   <p id="showHiddenCanteensLink"><a href="javascript:showHiddenCanteens();">Ausgeblendete Mensen wieder einblenden</a></p>
+  <p><a href="{% url 'mensautils.canteen:notification' %}">Benachrichtigungen konfigurieren</a></p>
   <p>
     Letzte Aktualisierung: {{ last_updated|date:"j. F Y H:i:s" }}<br />
     <a href="{% url 'mensautils.canteen:stats' %}">Statistiken</a> &bull;

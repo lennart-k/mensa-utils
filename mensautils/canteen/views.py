@@ -10,9 +10,9 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 
-from mensautils.canteen.forms import RateForm, SubmitServingForm
+from mensautils.canteen.forms import RateForm, SubmitServingForm, NotificationForm
 from mensautils.canteen.models import Canteen, Serving, Rating, InofficialDeprecation, \
-    Dish, ServingVerification
+    Dish, ServingVerification, Notification
 from mensautils.canteen.statistics import get_most_frequent_dishes, \
     get_most_favored_dishes
 
@@ -209,6 +209,52 @@ def report_deprecation(request: HttpRequest, serving_pk: int) -> HttpResponse:
     return render(
         request, 'mensautils/report_deprecation.html', {
             'serving': serving,
+        })
+
+
+@login_required
+def notification(request: HttpRequest) -> HttpResponse:
+    notifications = request.user.notifications.order_by('pattern')
+
+    return render(
+        request, 'mensautils/notifications.html', {
+            'notifications': notifications,
+        })
+
+
+@login_required
+def add_notification(request: HttpRequest) -> HttpResponse:
+    form = NotificationForm()
+    if request.method == 'POST':
+        form = NotificationForm(request.POST)
+        if form.is_valid():
+            # save rating
+            Notification.objects.create(
+                user=request.user, pattern=form.cleaned_data.get('pattern'))
+            messages.success(
+                request, 'Die Benachrichtigung wurde erfolgreich gespeichert.')
+            return redirect(reverse('mensautils.canteen:notification'))
+
+    return render(
+        request, 'mensautils/add_notification.html', {
+            'form': form,
+        }
+    )
+
+
+@login_required
+def delete_notification(request: HttpRequest, notification_pk: int) -> HttpResponse:
+    notification_elem = get_object_or_404(Notification, user=request.user, pk=notification_pk)
+
+    if request.method == 'POST':
+        notification_elem.delete()
+        messages.success(
+            request, 'Die Benachrichtigung wurde erfolgreich entfernt.')
+        return redirect(reverse('mensautils.canteen:notification'))
+
+    return render(
+        request, 'mensautils/delete_notification.html', {
+            'notification': notification_elem,
         })
 
 

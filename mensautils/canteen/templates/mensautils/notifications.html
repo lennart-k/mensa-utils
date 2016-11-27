@@ -1,0 +1,31 @@
+{% extends 'mensautils/base.html' %}
+{% load static %}
+
+{% block content %}
+  <h1>Mensa-Speisepläne der Uni Hamburg</h1>
+
+  {% if request.user.is_authenticated %}
+    <p>Hallo, <em>{{ request.user.username }}</em>.</p>
+  {% endif %}
+
+  <p>Du hast die folgenden Benachrichtigungen konfiguriert:</p>
+  <ul>
+    {% for notification in notifications %}
+      <li>
+        {{ notification.pattern }}
+        <a href="{% url 'mensautils.canteen:delete_notification' notification.pk %}">
+          <span class="glyphicon glyphicon-remove"></span>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+  <p>
+    <a href="{% url 'mensautils.canteen:add_notification' %}">
+      Benachrichtigung hinzufügen
+    </a>
+  </p>
+
+  <p>
+    <a href="{% url 'mensautils.canteen:index' %}">Startseite</a>
+  </p>
+{% endblock content %}
