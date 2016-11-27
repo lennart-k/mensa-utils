@@ -13,7 +13,7 @@
     display: none;
   }
   .displayOnHighWidth {
-    display: block;
+    display: inline;
   }
 }
 @media (max-width: 500px) {
@@ -21,11 +21,12 @@
     display: none;
   }
   td {
-    display: block;
+    display: inline-block;
+    width: 100% !important;
     text-align: left !important;
   }
   .displayOnSmallWidth {
-    display: block;
+    display: inline;
   }
   .displayOnHighWidth {
     display: none;
