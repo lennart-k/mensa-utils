@@ -41,6 +41,7 @@ class Serving(models.Model):
     last_updated = models.DateTimeField(default=timezone.now)
     official = models.BooleanField(default=True)
     officially_deprecated = models.BooleanField(default=False)
+    notified = models.BooleanField(default=False)
 
     def __str__(self):
         return '{}: {} ({}, {})'.format(self.canteen, str(self.dish), str(self.date),
@@ -141,6 +142,7 @@ class Notification(models.Model):
     pattern = models.CharField(max_length=300)
 
     added = models.DateTimeField(default=timezone.now)
+    last_notified = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return '{} ({})'.format(self.pattern, self.user)

@@ -158,6 +158,8 @@ RATING_DAILY_LIMIT = 2
 # number of users which at least should report a serving before it gets deprecated
 MIN_REPORTS = 3
 
+NOTIFICATION_FROM_ADDRESS = 'ag-server@informatik.uni-hamburg.de'
+
 # debug toolbar
 if DEBUG:
     INSTALLED_APPS += ['debug_toolbar']

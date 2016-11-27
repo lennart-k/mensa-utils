@@ -6,6 +6,7 @@ from django.core.management import BaseCommand
 
 from mensautils.canteen.archive import store_canteen_data
 from mensautils.canteen.canteen import fetch_canteen
+from mensautils.canteen.notifications import send_notifications
 
 
 class Command(BaseCommand):
@@ -20,3 +21,6 @@ class Command(BaseCommand):
                 canteen_date, canteen_foods = fetch_canteen(day, canteen_url)
                 store_canteen_data(
                     canteen_date, canteen_name, canteen_foods)
+
+        # send notifications for today
+        send_notifications()
