@@ -76,10 +76,12 @@
                   {% endif %}
                   <td style="text-align: right; padding-right: 15px;"
                       {% if entry.deprecated %}class="deprecated"{% elif not entry.verified %}class="unverified"{% endif %}>
+                    <span class="dispalyOnSmallWidth"><strong>Preis:</strong></span>
                     {{ entry.price }} €
                   </td>
                   <td style="text-align: right; padding-right: 15px;"
                       {% if entry.deprecated %}class="deprecated"{% elif not entry.verified %}class="unverified"{% endif %}>
+                    <span class="dispalyOnSmallWidth"><strong>Preis (Bedienstete):</strong></span>
                     {{ entry.price_staff }} €
                   </td>
                   <td style="text-align: left;"
@@ -102,6 +104,7 @@
                         </a>
                       {% endif %}
                     {% endif %}
+                    <hr class="displayOnSmallWidth" />
                   </td>
                 </tr>
               {% empty %}

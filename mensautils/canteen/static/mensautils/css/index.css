@@ -7,3 +7,21 @@
 .vegetarian {
   color: #76a93b;
 }
+
+@media (min-width: 501px) {
+  .displayOnSmallWidth {
+    display: none;
+  }
+}
+@media (max-width: 500px) {
+  th {
+    display: none;
+  }
+  td {
+    display: block;
+    text-align: left !important;
+  }
+  .displayOnSmallWidth {
+    display: block;
+  }
+}
