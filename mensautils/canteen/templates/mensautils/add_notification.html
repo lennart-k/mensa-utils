@@ -12,6 +12,9 @@
     {% csrf_token %}
 
     <p>Wähle eine Suchregel, anhand der Du Benachrichtigungen erhalten möchtest.</p>
+    <p>Sobald eine Mensa ein Gericht in den Speiseplan aufnimmt, die den von Dir
+      gewählten Ausdruck beinhaltet oder ihm ähnlich ist, erhältst Du eine
+      E-Mail, die Dich auf die Mensa und das entsprechende Gericht hinweist.</p>
 
     {{ form.pattern }}
 
