@@ -17,7 +17,7 @@
           {{ day|day_description }}
         </h2>
         {% for canteen, entries in canteens.items %}
-          <div id="canteen-{% if day == today %}0{% else %}99{% endif %}-{{ canteen.pk }}"
+          <div id="canteen-{% if day == first_day %}0{% else %}99{% endif %}-{{ canteen.pk }}"
                class="canteen canteen-{{ canteen.pk }}" data-canteennumber="{{ canteen.pk }}">
             <h3>
               {{ canteen }}

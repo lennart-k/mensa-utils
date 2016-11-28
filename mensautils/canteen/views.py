@@ -51,6 +51,7 @@ def index(request: HttpRequest) -> HttpResponse:
     return render(request, 'mensautils/mensa.html', {
         'days': (first_day, next_day),
         'today': today,
+        'first_day': first_day,
         'mensa_data': canteen_data,
         'last_updated': Serving.objects.aggregate(
             Max('last_updated'))['last_updated__max'],
