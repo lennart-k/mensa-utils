@@ -11,11 +11,14 @@
   <form method="POST" action="{{ request.get_full_path }}">
     {% csrf_token %}
     <p>
-      Hier kannst Du der Mensa <em>{{ serving.canteen.name }}</em> ein neues, heute
-      angebotenes Gericht vorschlagen. Bitte stelle vorher sicher, dass noch kein
-      entsprechendes Gericht bereits vorgeschlagen wurde. Übernehme die
-      Gerichtbezeichnung nach Möglichkeit bitte wörtlich vom offiziellen Mensa-Speiseplan.<br />
-      Die Mensa für die Du das Gericht angibst, ist <em>{{ canteen.name }}</em>.
+      Hier kannst Du ein Gericht, das heute von der Mensa
+      <em>{{ serving.canteen.name }}</em> angeboten wird und nicht im
+      Speiseplan steht, vorschlagen.
+      Bitte stelle sicher, dass noch kein
+      entsprechendes Gericht bereits von einem anderen Nutzer
+      vorgeschlagen wurde. Übernehme die Gerichtbezeichnung nach Möglichkeit
+      wörtlich von dem offiziellen Mensa-Speiseplan vor Ort.<br />
+      Die Mensa, für die Du das Gericht angibst, ist <em>{{ canteen.name }}</em>.
     </p>
 
     <p>
