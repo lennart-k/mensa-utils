@@ -9,7 +9,7 @@
 }
 
 @media (min-width: 501px) {
-  .displayOnSmallWidth {
+  .displayOnSmallWidth, .displayBlockOnSmallWidth {
     display: none;
   }
   .displayOnHighWidth {
@@ -27,6 +27,9 @@
   }
   .displayOnSmallWidth {
     display: inline;
+  }
+  .displayBlockOnSmallWidth {
+    display: block;
   }
   .displayOnHighWidth {
     display: none;
