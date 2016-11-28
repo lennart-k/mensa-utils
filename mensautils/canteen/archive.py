@@ -21,10 +21,24 @@ def store_canteen_data(day: datetime.date, canteen_name: str, dishes: dict):
         price = Decimal(dish_data['price'].replace(',', '.'))
         price_staff = Decimal(dish_data['price_staff'].replace(',', '.'))
 
-        # add serving
-        serving, created = Serving.objects.get_or_create(
-            date=day, canteen=canteen, dish=dish, price=price,
-            price_staff=price_staff)
+        # search for serving (allow different price)
+        possible_servings = Serving.objects.filter(date=day, canteen=canteen, dish=dish)
+        if possible_servings.count() == 0:
+            # create new entry
+            created = True
+            serving = Serving.objects.create(
+                date=day, canteen=canteen, dish=dish, price=price,
+                price_staff=price_staff)
+        elif possible_servings.count() == 1:
+            created = False
+            serving = possible_servings.first()
+            serving.price = price
+            serving.price_staff = price_staff
+        else:
+            # multiple servings. filter for price.
+            created = False
+            serving = possible_servings.get(price=price, price_staff=price_staff)
+
         if not created:
             serving.last_updated = now
             serving.officially_deprecated = False
