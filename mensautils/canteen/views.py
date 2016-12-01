@@ -26,11 +26,12 @@ def index(request: HttpRequest) -> HttpResponse:
     servings = servings.select_related(
         'dish', 'canteen').annotate(
         ratings__rating__avg=Avg('ratings__rating'),
-        ratings__count=Count('ratings'),
-        verifications__count=Count('verifications'),
-        deprecation_reports__count=Count('deprecation_reports')).order_by(
-        'date', 'canteen__name', 'officially_deprecated', 'deprecation_reports__count',
-        'dish__name')
+        ratings__count=Count('ratings', distinct=True),
+        verifications__count=Count('verifications', distinct=True),
+        deprecation_reports__count=Count('deprecation_reports', distinct=True)
+    ).order_by(
+        'date', 'canteen__name', 'officially_deprecated',
+        'deprecation_reports__count', 'dish__name')
 
     canteen_data = OrderedDict()
     canteen_data[first_day] = OrderedDict()
