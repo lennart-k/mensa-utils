@@ -62,7 +62,9 @@
                   {% if day == today %}
                     <td style="text-align: right; padding-right: 15px;"
                         {% if entry.deprecated %}class="deprecated"{% elif not entry.verified %}class="unverified"{% endif %}>
-                      <a class="displayOnHighWidth" href="{% url 'mensautils.canteen:rate_serving' entry.pk %}" title="Bewerten"><span class="glyphicon glyphicon-asterisk"></span></a>
+                        <div class="col-md-1"> 
+                        <a id="rate-thumbs-up"><span class="glyphicon glyphicon-thumbs-up rating gly-flip-horizontal"></span></a><a id="rate-thumbs-down"><span class="glyphicon glyphicon-thumbs-down rating"></span></a>
+                      </div>
                       <a class="displayOnSmallWidth" href="{% url 'mensautils.canteen:rate_serving' entry.pk %}" title="Bewerten">Bewerten</a>
                     </td>
                     <td style="text-align: center; padding-right: 15px;"
