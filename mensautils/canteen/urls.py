@@ -5,6 +5,8 @@ from mensautils.canteen import views
 app_name = 'mensautils.canteen'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^userconfig/save/$', views.save_canteen_user_config,
+        name='save_canteen_user_config'),
     url(r'^stats/$', views.stats, name='stats'),
     url(r'^rate/(\d+)/$', views.rate_serving, name='rate_serving'),
     url(r'^deprecate/(\d+)/$', views.report_deprecation, name='report_deprecation'),

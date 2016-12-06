@@ -1,3 +1,4 @@
+import re
 from collections import OrderedDict
 from datetime import date, timedelta
 
@@ -7,12 +8,14 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Max, Avg, Count
 from django.http import HttpRequest
 from django.http import HttpResponse
+from django.http import HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 
 from mensautils.canteen.forms import RateForm, SubmitServingForm, NotificationForm
 from mensautils.canteen.models import Canteen, Serving, Rating, InofficialDeprecation, \
-    Dish, ServingVerification, Notification
+    Dish, ServingVerification, Notification, CanteenUserConfig
 from mensautils.canteen.statistics import get_most_frequent_dishes, \
     get_most_favored_dishes
 
@@ -57,6 +60,26 @@ def index(request: HttpRequest) -> HttpResponse:
         'last_updated': Serving.objects.aggregate(
             Max('last_updated'))['last_updated__max'],
     })
+
+
+@login_required
+@require_POST
+def save_canteen_user_config(request: HttpRequest) -> HttpResponse:
+    """Save the order of canteens for the current user."""
+    order = request.POST.get('canteen_order')
+    hidden = request.POST.get('hidden_canteens')
+
+    # validate for valid order
+    pattern = re.compile(r'(\d+(,\d+)*)*')
+    if (not isinstance(order, str) or not isinstance(hidden, str)
+       or not pattern.match(order) or not pattern.match(hidden) or
+       len(order) > 100 or len(hidden) > 100):
+        return HttpResponseNotFound('failure')
+    conf, created = CanteenUserConfig.objects.get_or_create(user=request.user)
+    conf.order = order
+    conf.hidden = hidden
+    conf.save()
+    return HttpResponse('success')
 
 
 def stats(request: HttpRequest) -> HttpResponse:

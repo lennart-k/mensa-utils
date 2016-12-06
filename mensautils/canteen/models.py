@@ -29,6 +29,17 @@ class Canteen(models.Model):
         return self.name
 
 
+class CanteenUserConfig(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+        related_name='canteen_config')
+    order = models.CharField(max_length=100)
+    hidden = models.CharField(max_length=100)
+
+    def __str__(self):
+        return '{}'.format(self.user)
+
+
 class Serving(models.Model):
     date = models.DateField()
     dish = models.ForeignKey(
