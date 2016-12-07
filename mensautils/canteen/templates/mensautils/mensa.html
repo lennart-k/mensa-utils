@@ -139,6 +139,12 @@
       <a href="{% url 'login' %}?next={{ request.get_full_path }}">Anmelden</a>
     {% endif %}
   <p>
+  <div class="hidden" style="display: none;">
+    <div id="auth">{% if request.user.is_authenticated %}1{% else %}0{% endif %}</div>
+    <div id="userConfigAvailable">{% if user_config_available %}1{% else %}0{% endif %}</div>
+    <div id="serverCanteenOrder">{{ user_config.0 }}</div>
+    <div id="serverHiddenCanteens">{{ user_config.1 }}</div>
+  </div>
 {% endblock content %}
 
 {% block additional_js %}

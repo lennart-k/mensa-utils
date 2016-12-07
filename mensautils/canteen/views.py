@@ -36,6 +36,15 @@ def index(request: HttpRequest) -> HttpResponse:
         'date', 'canteen__name', 'officially_deprecated',
         'deprecation_reports__count', 'dish__name')
 
+    user_config = '', ''
+    user_config_available = False
+    if request.user.is_authenticated():
+        config = CanteenUserConfig.objects.filter(user=request.user)
+        if config.count() == 1:
+            config = config.first()
+            user_config = config.order, config.hidden
+            user_config_available = True
+
     canteen_data = OrderedDict()
     canteen_data[first_day] = OrderedDict()
     canteen_data[next_day] = OrderedDict()
@@ -57,6 +66,8 @@ def index(request: HttpRequest) -> HttpResponse:
         'today': today,
         'first_day': first_day,
         'mensa_data': canteen_data,
+        'user_config': user_config,
+        'user_config_available': user_config_available,
         'last_updated': Serving.objects.aggregate(
             Max('last_updated'))['last_updated__max'],
     })

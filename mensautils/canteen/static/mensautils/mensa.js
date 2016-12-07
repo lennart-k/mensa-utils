@@ -1,5 +1,6 @@
 (function(){
   var DAYS = [0, 99];
+  var authenticated = !!parseInt($('#auth').html());
 
   // Source of getCookie: https://docs.djangoproject.com/en/dev/ref/csrf/
   function getCookie(name) {
@@ -16,6 +17,20 @@
       }
     }
     return cookieValue;
+  }
+
+  /**
+   * Convert each element of a list to int.
+   *
+   * @param list
+   */
+  function string_list_to_int_list(list) {
+    var result = [];
+    $.each(list, function(index, item) {
+      result.push(parseInt(item));
+    });
+
+    return result;
   }
 
   /**
@@ -214,6 +229,38 @@
   }
 
   /**
+   * Use canteen order sent by server (if available).
+   */
+  function loadCanteenOrderFromServer() {
+    if (!authenticated) {
+      return;
+    }
+    var available = !!parseInt($('#userConfigAvailable').html());
+    if (!available) {
+      return;
+    }
+
+    var canteenOrder = $('#serverCanteenOrder').html();
+    var hiddenCanteens = $('#serverHiddenCanteens').html();
+
+    if (canteenOrder === '') {
+      canteenOrder = [];
+    } else {
+      canteenOrder = string_list_to_int_list(canteenOrder.split(','));
+    }
+    if (hiddenCanteens === '') {
+      hiddenCanteens = [];
+    } else {
+      hiddenCanteens = string_list_to_int_list(hiddenCanteens.split(','));
+    }
+
+    saveCanteenOrder(canteenOrder);
+    saveHiddenCanteens(hiddenCanteens);
+
+    // do not restore canteen order as this is triggered afterwards anyway
+  }
+
+  /**
    * Hide up button of highest and down button of lowest canteens
    */
   function hideUnnecessaryCanteenButtons(canteenOrder) {
@@ -298,6 +345,7 @@
     }
 
     integrityCheck();
+    loadCanteenOrderFromServer();
     restoreCanteenOrder();
     updateResponsiveHeights();
     $(window).resize(updateResponsiveHeights);
