@@ -29,6 +29,21 @@ class Canteen(models.Model):
         return self.name
 
 
+class OpeningTime(models.Model):
+    class Meta:
+        unique_together = ['canteen', 'weekday']
+
+    canteen = models.ForeignKey(
+        Canteen, on_delete=models.CASCADE, related_name='opening_times')
+    weekday = models.IntegerField() # iso weekday, 1=monday, 7=sunday
+    start = models.TimeField()
+    end = models.TimeField()
+
+    def __str__(self) -> str:
+        return '{}: {} {}-{}'.format(
+            self.canteen.name, self.weekday, self.start, self.end)
+
+
 class CanteenUserConfig(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE,

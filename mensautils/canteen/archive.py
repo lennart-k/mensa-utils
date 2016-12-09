@@ -1,12 +1,26 @@
 from django.utils import timezone
 
-from mensautils.canteen.models import Canteen, Dish, Serving
+from mensautils.canteen.models import Canteen, Dish, OpeningTime, Serving
 from mensautils.parser.canteen_result import CanteenResult
 
 
 def store_canteen_data(canteen_name: str, result: CanteenResult):
     """Save/update the canteen data and a CanteenResult returned by parser."""
     canteen, _ = Canteen.objects.get_or_create(name=canteen_name)
+
+    # store opening times
+    for weekday, opening in result.opening_times.items():
+        opening_object = OpeningTime.objects.filter(
+            canteen=canteen, weekday=weekday)
+        if opening_object.count() < 1:
+            OpeningTime.objects.create(
+                canteen=canteen, weekday=weekday,
+                start=opening[0], end=opening[1])
+        else:
+            opening_object = opening_object.first()
+            opening_object.start = opening[0]
+            opening_object.end = opening[1]
+            opening_object.save()
 
     now = timezone.now()
 

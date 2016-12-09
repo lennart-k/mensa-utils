@@ -1,10 +1,12 @@
 from django.contrib import admin
 
 from mensautils.canteen.models import Dish, Canteen, Serving, Rating, \
-    InofficialDeprecation, ServingVerification, Notification, CanteenUserConfig
+    InofficialDeprecation, ServingVerification, Notification, \
+    CanteenUserConfig, OpeningTime
 
 admin.site.register(Dish)
 admin.site.register(Canteen)
+admin.site.register(OpeningTime)
 admin.site.register(CanteenUserConfig)
 admin.site.register(InofficialDeprecation)
 admin.site.register(Notification)
