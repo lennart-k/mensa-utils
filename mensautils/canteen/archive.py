@@ -23,6 +23,7 @@ def store_canteen_data(canteen_name: str, result: CanteenResult):
             opening_object.save()
 
     now = timezone.now()
+    days = set()
 
     for serving in result.servings:
         dish = Dish.fuzzy_find_or_create(
@@ -52,8 +53,9 @@ def store_canteen_data(canteen_name: str, result: CanteenResult):
             serving_object.officially_deprecated = False
             serving_object.official = True
             serving_object.save()
+        days.add(serving.day)
 
     # mark old dishes for same day and canteen as deprecated
     Serving.objects.filter(
-        date=serving.day, canteen=canteen, last_updated__lt=now, official=True
+        date__in=days, canteen=canteen, last_updated__lt=now, official=True
     ).update(officially_deprecated=True)

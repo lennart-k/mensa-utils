@@ -87,12 +87,16 @@ def _parse_opening_times(plan: str) -> Dict[int, Tuple[time, time]]:
     return opening_times
 
 
-def _parse_day_plan(plan: str) -> (date, List[Serving]):
+def _parse_day_plan(plan: str) -> List[Serving]:
     """Parse a day plan for its date and all servings."""
     parsed_plan = BeautifulSoup(plan, 'html.parser')
 
     main_table = parsed_plan.find('table')
+    if not main_table:
+        return []
     rows = main_table.find_all('tr')
+    if not rows:
+        return []
 
     # get date of plan
     date_string = rows[0].find('th').text
@@ -105,6 +109,8 @@ def _parse_day_plan(plan: str) -> (date, List[Serving]):
 
     for row in rows[1:]:
         row = row.find_all('td')
+        if not row:
+            continue
 
         # get prices
         price = _parse_price(row[1].text)
