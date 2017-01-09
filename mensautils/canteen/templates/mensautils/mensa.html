@@ -110,7 +110,9 @@
                 <td colspan="5"><em>Keine Daten.</em></td>
               {% endfor %}
             </table>
-            <a href="{% url 'mensautils.canteen:submit_serving' canteen.pk %}"><span class="glyphicon glyphicon-plus"></span></a>
+            {% if day == today %}
+              <a href="{% url 'mensautils.canteen:submit_serving' canteen.pk %}"><span class="glyphicon glyphicon-plus"></span></a>
+            {% endif %}
           </div>
         {% endfor %}
       </div>
