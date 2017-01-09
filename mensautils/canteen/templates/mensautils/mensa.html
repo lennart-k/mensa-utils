@@ -7,7 +7,7 @@
   <h1>Mensa-Speisepläne des Studierendenwerks Hamburg</h1>
 
   {% if request.user.is_authenticated %}
-    <p>Hallo, <em>{{ request.user.username }}</em>.</p>
+    <p>Hallo, <em>{{ request.user.first_name }}</em>.</p>
   {% endif %}
 
   <div class="row">
