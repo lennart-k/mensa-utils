@@ -43,6 +43,11 @@ class OpeningTime(models.Model):
         return '{}: {} {}-{}'.format(
             self.canteen.name, self.weekday, self.start, self.end)
 
+    @staticmethod
+    def get_opening_time(canteen: Canteen, weekday: int) -> 'OpeningTime':
+        """Get the opening time of a canteen on a weekday."""
+        pass
+
 
 class CanteenUserConfig(models.Model):
     user = models.OneToOneField(
