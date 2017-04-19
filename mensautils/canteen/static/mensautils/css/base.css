@@ -46,3 +46,11 @@
 .hidden {
   display: none;
 }
+
+.dish-row>td {
+  padding: 5px;
+}
+
+.icon {
+  padding-right: 5px;
+}

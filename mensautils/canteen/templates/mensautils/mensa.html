@@ -21,51 +21,59 @@
                class="canteen canteen-{{ canteen.pk }}" data-canteennumber="{{ canteen.pk }}">
             <h3>
               {{ canteen }}
+              <div class="icons pull-right">
               <a class="up-{{ canteen.pk }} move-link" href="javascript:moveCanteen(-1, {{ canteen.pk }});">
-                <span class="glyphicon glyphicon-arrow-up"></span>
+                <span class="icon glyphicon glyphicon-menu-up"></span>
               </a>
               <a class="down-{{ canteen.pk }} move-link" href="javascript:moveCanteen(1, {{ canteen.pk }});">
-                <span class="glyphicon glyphicon-arrow-down"></span>
+                <span class="icon glyphicon glyphicon-menu-down"></span>
               </a>
               <a class="delete-{{ canteen.pk }} delete-link" href="javascript:hideCanteen({{ canteen.pk }});">
-                <span class="glyphicon glyphicon-remove"></span>
+                <span class="icon glyphicon glyphicon-trash"></span>
               </a>
+            {% if day == today %}
+              <a href="{% url 'mensautils.canteen:submit_serving' canteen.pk %}">
+                <span class="icon glyphicon glyphicon-plus"></span>
+              </a>
+            {% endif %}
+            </div>
             </h3>
-            <table style="width: 100%; max-width: 700px;">
+            <table class="table table-striped table-hover">
               <tr>
-                <th style="width: 5%; max-width: 4px;">
+                <th>
                 </th>
                 {% if day == today %}
-                  <th style="width: 5%; max-width: 4px;">
+                  <th>
                   </th>
-                  <th style="width: 10%; max-width: 15px;">
+                  <th>
                     Bewertung
                   </th>
                 {% endif %}
-                <th style="width: 15%; max-width: 10px; text-align: right; padding-right: 15px;">
+                <th>
                   Preis
                 </th>
-                <th style="width: 15%; max-width: 10px; text-align: right; padding-right: 15px;">
+                <th>
                   Bed.
                 </th>
-                <th style="text-align: left;">
+                <th>
                   Gericht
+                </th>
+                <th>
                 </th>
               </tr>
               {% for entry in entries %}
-                <tr>
-                  <td style="text-align: center;">
+                <tr class="dish-row">
+                  <td>
                     {% if entry.dish.vegetarian %}
                       <span class="vegetarian">Veg.</span>
                     {% endif %}
                   </td>
                   {% if day == today %}
-                    <td style="text-align: right; padding-right: 15px;"
-                        {% if entry.deprecated %}class="deprecated"{% elif not entry.verified %}class="unverified"{% endif %}>
+                    <td {% if entry.deprecated %}class="deprecated"{% elif not entry.verified %}class="unverified"{% endif %}>
                       <a class="displayOnHighWidth" href="{% url 'mensautils.canteen:rate_serving' entry.pk %}" title="Bewerten"><span class="glyphicon glyphicon-asterisk"></span></a>
                       <a class="displayOnSmallWidth" href="{% url 'mensautils.canteen:rate_serving' entry.pk %}" title="Bewerten">Bewerten</a>
                     </td>
-                    <td style="text-align: center; padding-right: 15px;"
+                    <td 
                         {% if entry.deprecated %}class="deprecated"{% elif not entry.verified %}class="unverified"{% endif %}>
                       {% if entry.average_rating %}
                         {{ entry.average_rating|stars }}<br />
@@ -73,17 +81,17 @@
                       {% endif %}
                     </td>
                   {% endif %}
-                  <td style="text-align: right; padding-right: 15px;"
+                  <td 
                       {% if entry.deprecated %}class="deprecated"{% elif not entry.verified %}class="unverified"{% endif %}>
                     <span class="displayOnSmallWidth"><strong>Preis:</strong></span>
                     {{ entry.price }} €
                   </td>
-                  <td style="text-align: right; padding-right: 15px;"
+                  <td 
                       {% if entry.deprecated %}class="deprecated"{% elif not entry.verified %}class="unverified"{% endif %}>
                     <span class="displayOnSmallWidth"><strong>Preis (Bedienstete):</strong></span>
                     {{ entry.price_staff }} €
                   </td>
-                  <td style="text-align: left;"
+                  <td 
                       {% if entry.deprecated %}class="deprecated"{% elif not entry.verified %}class="unverified"{% endif %}>
                     {{ entry.dish.name }}
                     {% if entry.maybe_deprecated %}
@@ -91,28 +99,27 @@
                         <em>(???)</em>
                       </span>
                     {% endif %}
+                    <hr class="displayBlockOnSmallWidth" />
+                  </td>
+                  <td>
                     {% if entry.date == today %}
                       {% if not entry.deprecated %}
                         <a href="{% url 'mensautils.canteen:report_deprecation' entry.pk %}">
-                          <span class="glyphicon glyphicon-remove"></span>
+                          <span class="icon glyphicon glyphicon-trash"></span>
                         </a>
                       {% endif %}
                       {% if not entry.official and not entry.verified %}
                         <a href="{% url 'mensautils.canteen:verify_serving' entry.pk %}">
-                          <span class="glyphicon glyphicon-ok"></span>
+                          <span class="icon glyphicon glyphicon-ok"></span>
                         </a>
                       {% endif %}
                     {% endif %}
-                    <hr class="displayBlockOnSmallWidth" />
                   </td>
                 </tr>
               {% empty %}
                 <td colspan="5"><em>Keine Daten.</em></td>
               {% endfor %}
             </table>
-            {% if day == today %}
-              <a href="{% url 'mensautils.canteen:submit_serving' canteen.pk %}"><span class="glyphicon glyphicon-plus"></span></a>
-            {% endif %}
           </div>
         {% endfor %}
       </div>
