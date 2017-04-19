@@ -22,7 +22,7 @@
           {% for dish in most_favored_dishes %}
             <li>
               {{ dish.name }}
-              (durchschnittlich {{ dish.servings__ratings__rating__avg }}/5)
+              (durchschnittlich {{ dish.servings__ratings__rating__avg }}/5, {{ dish.servings__ratings__rating__count }} mal bewertet)
             </li>
           {% endfor %}
         </ol>
