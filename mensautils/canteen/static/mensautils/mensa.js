@@ -299,7 +299,7 @@
         var height = 0;
         $.each(DAYS, function(index, day) {
           var elem = $('#canteen-' + day + '-' + canteenNumber);
-          var currentHeight = elem.height();
+          var currentHeight = elem.outerHeight();
           if (currentHeight > height) {
             height = currentHeight;
           }
