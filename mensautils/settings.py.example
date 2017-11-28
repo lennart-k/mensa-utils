@@ -151,6 +151,8 @@ CANTEENS = [
         {'canteen_number': 580}),
     ('Studhaus', studierendenwerk_parser,
         {'canteen_number': 310}),
+    ('Überseering', studierendenwerk_parser,
+        {'canteen_number': 380}),
 ]
 
 FUZZY_MIN_RATIO = 95
