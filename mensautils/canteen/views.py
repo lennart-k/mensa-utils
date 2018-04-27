@@ -38,7 +38,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
     user_config = '', ''
     user_config_available = False
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         config = CanteenUserConfig.objects.filter(user=request.user)
         if config.count() == 1:
             config = config.first()
