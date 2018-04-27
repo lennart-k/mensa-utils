@@ -51,7 +51,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
     # fetch canteens explicitly to prevent canteens from not being displayed
     # when there is no data for a day
-    canteens = Canteen.objects.order_by('name')
+    canteens = Canteen.objects.filter(active=True).order_by('name')
     for canteen in canteens:
         canteen_data[first_day][canteen] = []
         canteen_data[next_day][canteen] = []
@@ -147,7 +147,7 @@ def rate_serving(request: HttpRequest, serving_pk: int) -> HttpResponse:
 
 @login_required
 def submit_serving(request: HttpRequest, canteen_pk: int) -> HttpResponse:
-    canteen = get_object_or_404(Canteen, pk=canteen_pk)
+    canteen = get_object_or_404(Canteen, pk=canteen_pk, active=True)
 
     form = SubmitServingForm()
     if request.method == 'POST':

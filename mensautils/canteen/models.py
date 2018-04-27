@@ -24,6 +24,7 @@ class Dish(models.Model):
 
 class Canteen(models.Model):
     name = models.CharField(verbose_name=_('name'), max_length=100)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
