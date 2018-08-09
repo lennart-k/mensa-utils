@@ -64,8 +64,10 @@
               {% for entry in entries %}
                 <tr class="dish-row">
                   <td>
-                    {% if entry.dish.vegetarian %}
-                      <span class="vegetarian">Veg.</span>
+                    {% if entry.dish.vegan %}
+                      <span class="vegan">vegan</span>
+                    {% elif entry.dish.vegetarian %}
+                      <span class="vegetarian">veget.</span>
                     {% endif %}
                   </td>
                   {% if day == today %}
@@ -130,7 +132,8 @@
 
   <h4>Legende</h4>
   <p>
-    <span class="vegetarian">Veg.</span> vegetarisch/vegan<br />
+    <span class="vegetarian">veget.</span> vegetarisch<br />
+    <span class="vegetarian">vegan</span> vegan<br />
     <span class="deprecated">Gericht wurde aus dem Speiseplan entfernt</span><br />
     <span class="unverified">Das Gericht wurde von einem Nutzer vorgeschlagen und noch nicht bestätigt.</span>
   </p>

@@ -10,16 +10,17 @@ from fuzzywuzzy import fuzz
 class Dish(models.Model):
     name = models.CharField(verbose_name=_('name'), max_length=300)
     vegetarian = models.BooleanField()
+    vegan = models.BooleanField()
 
     def __str__(self):
         return self.name
 
     @staticmethod
-    def fuzzy_find_or_create(name: str, vegetarian: bool) -> 'Dish':
+    def fuzzy_find_or_create(name: str, vegetarian: bool, vegan: bool) -> 'Dish':
         for dish in Dish.objects.filter(vegetarian=vegetarian):
             if fuzz.token_sort_ratio(name, dish.name) >= settings.FUZZY_MIN_RATIO:
                 return dish
-        return Dish.objects.create(name=name, vegetarian=vegetarian)
+        return Dish.objects.create(name=name, vegetarian=vegetarian, vegan=vegan)
 
 
 class Canteen(models.Model):

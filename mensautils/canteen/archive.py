@@ -27,7 +27,8 @@ def store_canteen_data(canteen_name: str, result: CanteenResult):
 
     for serving in result.servings:
         dish = Dish.fuzzy_find_or_create(
-            name=serving.title, vegetarian=serving.vegetarian)
+            name=serving.title, vegetarian=serving.vegetarian,
+            vegan=serving.vegan)
 
         # search for serving (allow different price)
         possible_servings = Serving.objects.filter(
