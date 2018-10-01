@@ -125,6 +125,7 @@ LOGIN_REDIRECT_URL = '/'
 
 
 from mensautils.parser.studierendenwerk import get_canteen_data as studierendenwerk_parser
+from mensautils.parser.desy import get_canteen_data as desy_parser
 
 CANTEENS = [
     ('Bergedorf', studierendenwerk_parser,
@@ -141,6 +142,8 @@ CANTEENS = [
         {'canteen_number': 610}),
     ('Campus', studierendenwerk_parser,
         {'canteen_number': 340}),
+    ('DESY-Kantine', desy_parser,
+        {}),
     ('Geomatikum', studierendenwerk_parser,
         {'canteen_number': 540}),
     ('Harburg', studierendenwerk_parser,
