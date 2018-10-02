@@ -50,10 +50,10 @@
                   </th>
                 {% endif %}
                 <th>
-                  Preis
+                  Preis&nbsp;(€)
                 </th>
                 <th>
-                  Bed.
+                  Bed.&nbsp;(€)
                 </th>
                 <th>
                   Gericht
@@ -86,12 +86,12 @@
                   <td 
                       {% if entry.deprecated %}class="deprecated"{% elif not entry.verified %}class="unverified"{% endif %}>
                     <span class="displayOnSmallWidth"><strong>Preis:</strong></span>
-                    {{ entry.price }} €
+                    {{ entry.price }}
                   </td>
                   <td 
                       {% if entry.deprecated %}class="deprecated"{% elif not entry.verified %}class="unverified"{% endif %}>
                     <span class="displayOnSmallWidth"><strong>Preis (Bedienstete):</strong></span>
-                    {{ entry.price_staff }} €
+                    {{ entry.price_staff }}
                   </td>
                   <td 
                       {% if entry.deprecated %}class="deprecated"{% elif not entry.verified %}class="unverified"{% endif %}>
