@@ -14,8 +14,6 @@
 .canteen {
   padding: 3px 3px 10px 10px;
   margin: 5px 0px 15px;
-  box-shadow: 0px 4px 10px #888888;
-  border-radius: 3px;
 }
 
 @media (min-width: 501px) {
