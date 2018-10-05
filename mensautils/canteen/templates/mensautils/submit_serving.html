@@ -50,6 +50,13 @@
       {% endfor %}
     </p>
     <p>
+      {{ form.vegan }}
+      <label for="id_vegan">Vegan</label>
+      {% for error in form.vegan.errors %}
+        {{ error }}<br />
+      {% endfor %}
+    </p>
+    <p>
       {% for error in form.non_field_errors %}
         {{ error }}<br />
       {% endfor %}

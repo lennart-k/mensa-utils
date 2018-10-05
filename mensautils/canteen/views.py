@@ -154,7 +154,8 @@ def submit_serving(request: HttpRequest, canteen_pk: int) -> HttpResponse:
         form = SubmitServingForm(request.POST)
         if form.is_valid():
             dish = Dish.fuzzy_find_or_create(form.cleaned_data.get('name'),
-                                             form.cleaned_data.get('vegetarian'))
+                                             form.cleaned_data.get('vegetarian'),
+                                             form.cleaned_data.get('vegan'))
             price = form.cleaned_data.get('price')
             price_staff = form.cleaned_data.get('price_staff')
             today = date.today()
