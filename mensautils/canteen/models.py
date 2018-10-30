@@ -17,7 +17,7 @@ class Dish(models.Model):
 
     @staticmethod
     def fuzzy_find_or_create(name: str, vegetarian: bool, vegan: bool) -> 'Dish':
-        for dish in Dish.objects.filter(vegetarian=vegetarian):
+        for dish in Dish.objects.filter(vegetarian=vegetarian, vegan=vegan):
             if fuzz.token_sort_ratio(name, dish.name) >= settings.FUZZY_MIN_RATIO:
                 return dish
         return Dish.objects.create(name=name, vegetarian=vegetarian, vegan=vegan)
