@@ -313,13 +313,13 @@ class CanteenViewSet(viewsets.ReadOnlyModelViewSet):
     @action(detail=True)
     def today(self, request, pk=None):
         today = date.today()
-        servings_today = Serving.objects.filter(date=today, canteen_id=pk).select_related('dish')
+        servings_today = Serving.objects.filter(date=today, canteen_id=pk, officially_deprecated=False).select_related('dish')
         serializer = ServingSerializer(servings_today, many=True)
         return Response(serializer.data)
 
     @action(detail=True)
     def tomorrow(self, request, pk=None):
         tomorrow = _get_valid_day(date.today() + timedelta(days=1))
-        servings_tomorrow = Serving.objects.filter(date=tomorrow, canteen_id=pk)
+        servings_tomorrow = Serving.objects.filter(date=tomorrow, canteen_id=pk, officially_deprecated=False).select_related('dish')
         serializer = ServingSerializer(servings_tomorrow, many=True)
         return Response(serializer.data)
