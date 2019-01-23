@@ -12,10 +12,14 @@ from django.http import HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from mensautils.canteen.forms import RateForm, SubmitServingForm, NotificationForm
 from mensautils.canteen.models import Canteen, Serving, Rating, InofficialDeprecation, \
     Dish, ServingVerification, Notification, CanteenUserConfig
+from mensautils.canteen.serializers import CanteenSerializer, DishSerializer, ServingSerializer
 from mensautils.canteen.statistics import get_most_frequent_dishes, \
     get_most_favored_dishes
 
@@ -300,3 +304,22 @@ def _get_valid_day(base_day: date) -> date:
     if base_day.weekday() == 6:
         return base_day + timedelta(days=1)
     return base_day
+
+
+class CanteenViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = CanteenSerializer
+    queryset = Canteen.objects.filter(active=True)
+
+    @action(detail=True)
+    def today(self, request, pk=None):
+        today = date.today()
+        servings_today = Serving.objects.filter(date=today, canteen_id=pk).select_related('dish')
+        serializer = ServingSerializer(servings_today, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True)
+    def tomorrow(self, request, pk=None):
+        tomorrow = _get_valid_day(date.today() + timedelta(days=1))
+        servings_tomorrow = Serving.objects.filter(date=tomorrow, canteen_id=pk)
+        serializer = ServingSerializer(servings_tomorrow, many=True)
+        return Response(serializer.data)

@@ -3,3 +3,4 @@ requests
 python-Levenshtein
 fuzzywuzzy
 beautifulsoup4
+djangorestframework

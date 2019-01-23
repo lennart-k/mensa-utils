@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from rest_framework.routers import DefaultRouter
 
 from mensautils.canteen import views
 
@@ -17,3 +18,7 @@ urlpatterns = [
         name='delete_notification'),
     url(r'^notification/add/$', views.add_notification, name='add_notification'),
 ]
+
+router = DefaultRouter()
+router.register(r'api/canteens', views.CanteenViewSet, base_name='canteens')
+urlpatterns += router.urls
