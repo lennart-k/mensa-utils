@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from mensautils.canteen.models import Canteen, Dish, Serving
+from mensautils.canteen.models import Canteen, Serving
 
 
 class CanteenSerializer(serializers.ModelSerializer):
@@ -9,15 +9,11 @@ class CanteenSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
-class DishSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Dish
-        fields = ('name', 'vegetarian', 'vegan')
-
-
 class ServingSerializer(serializers.ModelSerializer):
-    dish = DishSerializer(read_only=True)
-
     class Meta:
         model = Serving
-        fields = ('date', 'dish', 'price', 'price_staff', 'canteen')
+        fields = ('date', 'dish', 'vegetarian', 'vegan', 'price', 'price_staff', 'canteen')
+
+    dish = serializers.CharField(source='dish.name')
+    vegetarian = serializers.BooleanField(source='dish.vegetarian')
+    vegan = serializers.BooleanField(source='dish.vegan')

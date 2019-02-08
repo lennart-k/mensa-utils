@@ -19,7 +19,7 @@ from rest_framework.response import Response
 from mensautils.canteen.forms import RateForm, SubmitServingForm, NotificationForm
 from mensautils.canteen.models import Canteen, Serving, Rating, InofficialDeprecation, \
     Dish, ServingVerification, Notification, CanteenUserConfig
-from mensautils.canteen.serializers import CanteenSerializer, DishSerializer, ServingSerializer
+from mensautils.canteen.serializers import CanteenSerializer, ServingSerializer
 from mensautils.canteen.statistics import get_most_frequent_dishes, \
     get_most_favored_dishes
 
