@@ -18,8 +18,8 @@ from rest_framework.response import Response
 
 from mensautils.canteen.forms import RateForm, SubmitServingForm, NotificationForm
 from mensautils.canteen.models import Canteen, Serving, Rating, InofficialDeprecation, \
-    Dish, ServingVerification, Notification, CanteenUserConfig
-from mensautils.canteen.serializers import CanteenSerializer, ServingSerializer
+    Dish, ServingVerification, Notification, CanteenUserConfig, OpeningTime
+from mensautils.canteen.serializers import CanteenSerializer, ServingSerializer, OpeningTimeSerializer
 from mensautils.canteen.statistics import get_most_frequent_dishes, \
     get_most_favored_dishes
 
@@ -322,4 +322,10 @@ class CanteenViewSet(viewsets.ReadOnlyModelViewSet):
         tomorrow = _get_valid_day(date.today() + timedelta(days=1))
         servings_tomorrow = Serving.objects.filter(date=tomorrow, canteen_id=pk, officially_deprecated=False).select_related('dish')
         serializer = ServingSerializer(servings_tomorrow, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True)
+    def openingtimes(self, request, pk=None):
+        opening_times = OpeningTime.objects.filter(canteen_id=pk).order_by('weekday')
+        serializer = OpeningTimeSerializer(opening_times, many=True)
         return Response(serializer.data)

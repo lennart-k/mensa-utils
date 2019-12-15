@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from mensautils.canteen.models import Canteen, Serving
+from mensautils.canteen.models import Canteen, Serving, OpeningTime
 
 
 class CanteenSerializer(serializers.ModelSerializer):
@@ -17,3 +17,8 @@ class ServingSerializer(serializers.ModelSerializer):
     dish = serializers.CharField(source='dish.name')
     vegetarian = serializers.BooleanField(source='dish.vegetarian')
     vegan = serializers.BooleanField(source='dish.vegan')
+
+class OpeningTimeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OpeningTime
+        fields = ('canteen', 'weekday', 'start', 'end')
