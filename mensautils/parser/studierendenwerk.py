@@ -22,6 +22,16 @@ WEEKDAYS = {
     'sonntag': 7,
 }
 
+SHORT_WEEKDAY_NAMES = {
+    'Mo': 'montag',
+    'Di': 'dienstag',
+    'Mi': 'mittwoch',
+    'Do': 'donnerstag',
+    'Fr': 'freitag',
+    'Sa': 'samstag',
+    'So': 'Sonntag',
+}
+
 
 def get_canteen_data(canteen_number: int) -> CanteenResult:
     """Get information about canteen."""
@@ -48,26 +58,26 @@ def _parse_opening_times(plan: str) -> Dict[int, Tuple[time, time]]:
 
     paragraph = parsed_plan.find('p')
     rows = paragraph.text.split('\n')
-    weekdays_regex = '|'.join(WEEKDAYS.keys())
+    weekdays_regex = '|'.join(SHORT_WEEKDAY_NAMES)
 
     single_day_pattern = re.compile(
-        r'({}):?\s* (\d+:\d+)\s*-\s*(\d+:\d+)'.format(
+        r'({}):?\s* (\d+.\d+)\s*-\s*(\d+\.\d+)'.format(
             weekdays_regex), flags=re.IGNORECASE)
 
     multiple_day_pattern = re.compile(
-        r'({})\s*-\s*({}):?\s* (\d+:\d+)\s*-\s*(\d+:\d+)'.format(
+        r'({}):?\s*-\s*({})\s* (\d+\.\d+)\s*-\s*(\d+\.\d+)'.format(
             *[weekdays_regex] * 2), flags=re.IGNORECASE)
     for row in rows:
         multiple = multiple_day_pattern.search(row)
         if multiple:
-            first_day = WEEKDAYS[multiple.group(1).lower()]
-            last_day = WEEKDAYS[multiple.group(2).lower()]
+            first_day = WEEKDAYS[SHORT_WEEKDAY_NAMES[multiple.group(1)]]
+            last_day = WEEKDAYS[SHORT_WEEKDAY_NAMES[multiple.group(2)]]
             if first_day > last_day:
                 # invalid data.
                 continue
 
-            start_hour = datetime.strptime(multiple.group(3), '%H:%M').time()
-            end_hour = datetime.strptime(multiple.group(4), '%H:%M').time()
+            start_hour = datetime.strptime(multiple.group(3), '%H.%M').time()
+            end_hour = datetime.strptime(multiple.group(4), '%H.%M').time()
 
             day = first_day
             while day <= last_day:
@@ -77,10 +87,10 @@ def _parse_opening_times(plan: str) -> Dict[int, Tuple[time, time]]:
             continue
         single = single_day_pattern.search(row)
         if single:
-            day = WEEKDAYS[single.group(1).lower()]
+            day = WEEKDAYS[SHORT_WEEKDAY_NAMES[single.group(1)]]
 
-            start_hour = datetime.strptime(single.group(2), '%H:%M').time()
-            end_hour = datetime.strptime(single.group(3), '%H:%M').time()
+            start_hour = datetime.strptime(single.group(2), '%H.%M').time()
+            end_hour = datetime.strptime(single.group(3), '%H.%M').time()
 
             opening_times[day] = start_hour, end_hour
 
