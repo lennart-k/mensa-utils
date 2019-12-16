@@ -56,16 +56,16 @@ def _parse_opening_times(plan: str) -> Dict[int, Tuple[time, time]]:
     parsed_plan = BeautifulSoup(plan, 'html.parser')
     opening_times = {}
 
-    paragraph = parsed_plan.find('p')
+    paragraph = parsed_plan.find('div', id='cafeteria')
     rows = paragraph.text.split('\n')
     weekdays_regex = '|'.join(SHORT_WEEKDAY_NAMES)
 
     single_day_pattern = re.compile(
-        r'({}):?\s* (\d+.\d+)\s*-\s*(\d+\.\d+)'.format(
+        r'({})\.?\s* (\d+.\d+)\s*-\s*(\d+\.\d+)'.format(
             weekdays_regex), flags=re.IGNORECASE)
 
     multiple_day_pattern = re.compile(
-        r'({}):?\s*-\s*({})\s* (\d+\.\d+)\s*-\s*(\d+\.\d+)'.format(
+        r'({})\.?\s*-\s*({})\.?\s* (\d+\.\d+)\s*-\s*(\d+\.\d+)'.format(
             *[weekdays_regex] * 2), flags=re.IGNORECASE)
     for row in rows:
         multiple = multiple_day_pattern.search(row)
