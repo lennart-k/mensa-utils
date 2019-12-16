@@ -20,5 +20,5 @@ urlpatterns = [
 ]
 
 router = DefaultRouter()
-router.register(r'api/canteens', views.CanteenViewSet, base_name='canteens')
+router.register(r'api/canteens', views.CanteenViewSet, basename='canteens')
 urlpatterns += router.urls
