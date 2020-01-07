@@ -124,6 +124,10 @@ STATIC_URL = '/static/'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
+}
+
 
 from mensautils.parser.studierendenwerk import get_canteen_data as studierendenwerk_parser
 from mensautils.parser.desy import get_canteen_data as desy_parser

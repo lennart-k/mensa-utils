@@ -18,12 +18,15 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
+from rest_framework.documentation import include_docs_urls
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url('^login/$', auth_views.LoginView.as_view(template_name='mensautils/login.html'),
         name='login'),
     url('^logout/$', auth_views.LogoutView.as_view(), name='logout'),
-    url(r'^', include('mensautils.canteen.urls'))
+    url(r'^', include('mensautils.canteen.urls')),
+    url(r'^docs/', include_docs_urls(title='Documentation', authentication_classes=[], permission_classes=[])),
 ]
 
 if settings.DEBUG:
