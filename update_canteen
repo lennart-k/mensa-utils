@@ -1,3 +1,0 @@
-#!/bin/bash
-. .pyenv/bin/activate
-./manage.py fetchcanteen
