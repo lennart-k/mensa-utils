@@ -76,8 +76,12 @@ def _parse_opening_times(plan: str) -> Dict[int, Tuple[time, time]]:
                 # invalid data.
                 continue
 
-            start_hour = datetime.strptime(multiple.group(3), '%H.%M').time()
-            end_hour = datetime.strptime(multiple.group(4), '%H.%M').time()
+            # Sometimes, a colon is used instead of a point
+            start = multiple.group(3).replace(':', '.')
+            end = multiple.group(4).replace(':', '.')
+
+            start_hour = datetime.strptime(start, '%H.%M').time()
+            end_hour = datetime.strptime(end, '%H.%M').time()
 
             day = first_day
             while day <= last_day:
@@ -89,8 +93,12 @@ def _parse_opening_times(plan: str) -> Dict[int, Tuple[time, time]]:
         if single:
             day = WEEKDAYS[SHORT_WEEKDAY_NAMES[single.group(1)]]
 
-            start_hour = datetime.strptime(single.group(2), '%H.%M').time()
-            end_hour = datetime.strptime(single.group(3), '%H.%M').time()
+            # Sometimes, a colon is used instead of a point
+            start = single.group(2).replace(':', '.')
+            end = single.group(3).replace(':', '.')
+
+            start_hour = datetime.strptime(start, '%H.%M').time()
+            end_hour = datetime.strptime(end, '%H.%M').time()
 
             opening_times[day] = start_hour, end_hour
 
