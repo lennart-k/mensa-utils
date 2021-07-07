@@ -9,6 +9,7 @@ from decimal import Decimal
 from typing import Dict, List, Tuple
 
 from mensautils.parser.canteen_result import CanteenResult, Serving
+from mensautils.parser.common import extract_opening_times
 
 
 def get_canteen_data() -> CanteenResult:
@@ -28,11 +29,18 @@ def get_canteen_data() -> CanteenResult:
 def _parse_opening_times(plan: str) -> Dict[int, Tuple[time, time]]:
     """Parse opening times from a plan."""
     parsed_plan = BeautifulSoup(plan, 'html.parser')
-    opening_times = {}
 
-    # FIXME
+    openings_div = parsed_plan.find('div', {'id': 'openings'})
+    openings_strings = openings_div.find('p').strings
+    for string in openings_strings:
+        if string == 'Kantine':
+            opening_string = next(openings_strings)
+            break
+    else:
+        # No opening times for 'Kantine' found
+        return {}
 
-    return opening_times
+    return extract_opening_times([opening_string])
 
 
 def _parse_full_plan(plan: str) -> List[Serving]:
