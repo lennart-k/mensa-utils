@@ -13,7 +13,7 @@ from mensautils.parser.canteen_result import CanteenResult, Serving
 
 def get_canteen_data() -> CanteenResult:
     """Get information about canteen."""
-    url = 'https://desy.myalsterfood.de/'
+    url = 'https://desy.myalsterfood.de/de/'
 
     response = requests.get(url)
     response.encoding = response.apparent_encoding
@@ -40,13 +40,13 @@ def _parse_full_plan(plan: str) -> List[Serving]:
     parsed_plan = BeautifulSoup(plan, 'html.parser')
 
     servings = []
-    days = parsed_plan.find_all('div', {'class': 'food'})
+    days = parsed_plan.find_all('div', {'class': 'entry'})
     for day in days:
         try:
             date_string = day.attrs['id']
-            plan_date = datetime.strptime(date_string, '%Y-%m-%d')
+            plan_date = datetime.strptime(date_string, 'entry-%Y-%m-%d')
 
-            items = day.find_all('table', {'class': 'food-item'})
+            items = day.find_all('table', {'class': 'entry'})
             parsed_items =  [_parse_item(plan_date, item) for item in items]
             servings += [item for item in parsed_items if item]
         except:
@@ -59,7 +59,7 @@ FILTER_ITEMS = {'Tagessuppe', 'Preis per 100g'}
 
 
 def _parse_item(plan_date, item) -> Serving:
-    imgs = item.find_all('img', attrs={'class': 'header-icons'})
+    imgs = item.find_all('img', attrs={'class': 'category-icons'})
     srcs = [im.attrs['src'] for im in imgs if 'src' in im.attrs]
     is_vegetarian = any('icon-vegetarian' in src for src in srcs)
     is_vegan = any('icon-vegan' in src for src in srcs)
@@ -77,7 +77,7 @@ def _parse_item(plan_date, item) -> Serving:
         lambda el: el.name == 'p' and 'Allergene' in el.text)
     if allergen_p:
         allergen_string = allergen_p.text
-        allergen_pattern = re.compile(r'(\d+)\)')
+        allergen_pattern = re.compile(r'(\d+\.?\d?)\)')
         allergens = set(allergen_pattern.findall(allergen_string))
     else:
         allergens = set()
