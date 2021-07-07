@@ -1,7 +1,7 @@
-Django
+Django<3.2
 requests
 python-Levenshtein
 fuzzywuzzy
 beautifulsoup4
-djangorestframework
+djangorestframework<3.13
 coreapi
