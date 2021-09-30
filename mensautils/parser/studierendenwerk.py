@@ -1,76 +1,137 @@
 #!/usr/bin/env python3
 """Fetch and display canteen plans."""
+import json
 import re
 import requests
 
 from bs4 import BeautifulSoup
-from bs4.element import Tag
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from typing import Dict, List, Tuple
 
 from mensautils.parser.canteen_result import CanteenResult, Serving
-from mensautils.parser.common import extract_opening_times
+
+WEEKDAYS = {
+    'Montag': 1,
+    'Dienstag': 2,
+    'Mittwoch': 3,
+    'Donnerstag': 4,
+    'Freitag': 5,
+    'Samstag': 6,
+    'Sonntag': 7,
+}
 
 
 def get_canteen_data(canteen_number: int) -> CanteenResult:
     """Get information about canteen."""
-    base_url = 'http://speiseplan.studierendenwerk-hamburg.de/de/{}/{}/{}/'
+    base_url = 'https://www.studierendenwerk-hamburg.de/speiseplan/'
 
-    today = date.today()
-
-    today_url = base_url.format(canteen_number, today.year, 0)
+    today_url = base_url
     today_plan = requests.get(today_url).text
-    next_day_url = base_url.format(canteen_number, today.year, 99)
+    next_day_url = base_url + '?t=next_day'
     next_day_plan = requests.get(next_day_url).text
 
-    servings = _parse_day_plan(today_plan) + _parse_day_plan(next_day_plan)
+    servings = _parse_day_plan(today_plan, canteen_number) + _parse_day_plan(next_day_plan, canteen_number)
 
-    opening_times = _parse_opening_times(today_plan)
+    opening_times = _parse_opening_times(today_plan, canteen_number)
+    print(opening_times)
 
     return CanteenResult(opening_times, servings)
 
 
-def _parse_opening_times(plan: str) -> Dict[int, Tuple[time, time]]:
+def _parse_opening_times(plan: str, canteen_number: int) -> Dict[int, Tuple[time, time]]:
     """Parse opening times from a plan."""
     parsed_plan = BeautifulSoup(plan, 'html.parser')
 
-    paragraph = parsed_plan.find('div', id='cafeteria')
-    rows = paragraph.text.split('\n')
-    return extract_opening_times(rows)
+    location = parsed_plan.find(attrs={'data-location': canteen_number})
+    if not location:
+        return {}
+    opening_times_str = location.attrs['data-openings']
+    opening_times = json.loads(opening_times_str)
+    # These opening times are weird because they contain the opening times and the meal serving times
+    # but no way to differentiate between them. We just take the last information. That might be the serving times.
+    opening_times_parsed = {}
+
+    print(opening_times)
+
+    for row in opening_times['openings']:
+        start = row['dayFrom']
+        end = row['dayTo']
+        start_time = row['timeFrom'].removesuffix('Uhr').strip()
+        end_time = row['timeTo'].removesuffix('Uhr').strip()
+        if not start:
+            continue
+
+        first_day = WEEKDAYS[start]
+        if end:
+            last_day = WEEKDAYS[end]
+        else:
+            last_day = first_day
+
+        if first_day > last_day:
+            # invalid data.
+            continue
+
+        start_hour = datetime.strptime(start_time, '%H:%M').time()
+        end_hour = datetime.strptime(end_time, '%H:%M').time()
+
+        day = first_day
+        while day <= last_day:
+            opening_times_parsed[day] = start_hour, end_hour
+            day += 1
+
+    return opening_times_parsed
 
 
-def _parse_day_plan(plan: str) -> List[Serving]:
+def _parse_day_plan(plan: str, canteen_number: int) -> List[Serving]:
     """Parse a day plan for its date and all servings."""
     parsed_plan = BeautifulSoup(plan, 'html.parser')
 
-    main_table = parsed_plan.find('table')
-    if not main_table:
+    canteen_section = parsed_plan.find(attrs={'data-location-id': canteen_number})
+    if not canteen_section:
         return []
-    rows = main_table.find_all('tr')
-    if not rows:
+    menus = canteen_section.find_all(attrs={'class': 'menue-tile'})
+    if not menus:
         return []
 
     # get date of plan
-    date_string = rows[0].find('th').text
-    pattern = re.compile(r'\d+\.\d+\.\d+')
-    date_match = pattern.search(date_string).group(0)
-    plan_date = datetime.strptime(date_match, '%d.%m.%Y').date()
+    date_string = canteen_section.find(attrs={'class': 'tx-epwerkmenu-menu-timestamp-active'}).attrs['data-timestamp']
+    plan_date = datetime.strptime(date_string, '%Y-%m-%d').date()
 
     # get servings
     servings = []
 
-    for row in rows[1:]:
-        row = row.find_all('td')
-        if not row:
+    for menu in menus[1:]:
+        if not menu:
             continue
 
-        # get prices
-        price = _parse_price(row[1].text)
-        price_staff = _parse_price(row[2].text)
+        menu_name = menu.find(attrs={'class': 'singlemeal__headline'}).text.strip()
 
-        servings.append(_parse_dish_title(plan_date, price, price_staff,
-                        row[0]))
+        price = Decimal(0)
+        price_staff = Decimal(0)
+
+        for info in menu.find_all(attrs={'class': 'singlemeal__info'}):
+            if 'Studierende' in info.text:
+                price = _parse_price(info.text)
+            elif 'Bedienstete' in info.text:
+                price_staff = _parse_price(info.text)
+
+        allergens = set(menu.attrs['data-allergens'].split())
+
+        # search for vegetarian & vegan
+        symbols = [int(symbol) for symbol in menu.attrs['data-symbols'].split()]
+        vegetarian = 38 in symbols
+        vegan = 31 in symbols
+
+        menu_name = _remove_nested_brackets(menu_name).strip()
+
+        # remove spaces before followed by comma
+        pattern = re.compile(r'\s+,')
+        menu_name = pattern.sub(',', menu_name)
+
+        serving = Serving(plan_date, menu_name, price, price_staff, vegetarian, vegan, allergens)
+
+        servings.append(serving)
 
     return servings
 
@@ -80,32 +141,6 @@ def _parse_price(price: str) -> Decimal:
     price_pattern = re.compile(r'(\d+),(\d+)')
     price = price_pattern.search(price)
     return Decimal('{}.{}'.format(price.group(1), price.group(2)))
-
-
-def _parse_dish_title(day: date, price: Decimal, price_staff: Decimal,
-                      title: Tag) -> Serving:
-    """Parse a dish title for its informationto populate a serving."""
-    title_str = str(title)
-    title_text = title.text.strip()
-
-    # search for allergens
-    allergen_pattern = re.compile(r'title="?([^>"]*)"?>')
-    allergens = set(allergen_pattern.findall(title_str))
-
-    # search for vegetarian
-    vegetarian = 'vegetarisch' in title_str
-
-    # search for vegan
-    vegan = 'Vegan' in title_str
-
-    title_text = _remove_nested_brackets(title_text).strip()
-
-    # remove spaces before followed by comma
-    pattern = re.compile(r'\s+,')
-    title_text = pattern.sub(',', title_text)
-
-    return Serving(
-        day, title_text, price, price_staff, vegetarian, vegan, allergens)
 
 
 def _current_monday(day: date):
