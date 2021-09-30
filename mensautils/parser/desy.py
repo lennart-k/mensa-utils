@@ -60,7 +60,7 @@ def _parse_opening_times(plan: str) -> Dict[int, Tuple[time, time]]:
         # No opening times for 'Kantine' found
         return {}
 
-    return extract_opening_times([opening_string])
+    return _extract_opening_times([opening_string])
 
 
 def _parse_full_plan(plan: str) -> List[Serving]:
