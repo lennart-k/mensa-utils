@@ -34,7 +34,6 @@ def get_canteen_data(canteen_number: int) -> CanteenResult:
     servings = _parse_day_plan(today_plan, canteen_number) + _parse_day_plan(next_day_plan, canteen_number)
 
     opening_times = _parse_opening_times(today_plan, canteen_number)
-    print(opening_times)
 
     return CanteenResult(opening_times, servings)
 
@@ -51,8 +50,6 @@ def _parse_opening_times(plan: str, canteen_number: int) -> Dict[int, Tuple[time
     # These opening times are weird because they contain the opening times and the meal serving times
     # but no way to differentiate between them. We just take the last information. That might be the serving times.
     opening_times_parsed = {}
-
-    print(opening_times)
 
     for row in opening_times['openings']:
         start = row['dayFrom']
