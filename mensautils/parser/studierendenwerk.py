@@ -137,7 +137,10 @@ def _parse_price(price: str) -> Decimal:
     """Parse a price from a string."""
     price_pattern = re.compile(r'(\d+),(\d+)')
     price = price_pattern.search(price)
-    return Decimal('{}.{}'.format(price.group(1), price.group(2)))
+    if price is not None:
+        return Decimal('{}.{}'.format(price.group(1), price.group(2)))
+    else:
+        return Decimal(0)
 
 
 def _current_monday(day: date):
