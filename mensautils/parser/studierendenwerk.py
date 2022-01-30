@@ -117,8 +117,8 @@ def _parse_day_plan(plan: str, canteen_number: int) -> List[Serving]:
 
         # search for vegetarian & vegan
         symbols = [int(symbol) for symbol in menu.attrs['data-symbols'].split()]
-        vegetarian = 38 in symbols
-        vegan = 31 in symbols
+        vegetarian = 31 in symbols
+        vegan = 38 in symbols
 
         menu_name = _remove_nested_brackets(menu_name).strip()
 
