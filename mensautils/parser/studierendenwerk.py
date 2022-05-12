@@ -98,7 +98,7 @@ def _parse_day_plan(plan: str, canteen_number: int) -> List[Serving]:
     # get servings
     servings = []
 
-    for menu in menus[1:]:
+    for menu in menus:
         if not menu:
             continue
 
