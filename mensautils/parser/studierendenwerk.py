@@ -19,12 +19,21 @@ WEEKDAYS = {
     'Freitag': 5,
     'Samstag': 6,
     'Sonntag': 7,
+    'Monday': 1,
+    'Tuesday': 2,
+    'Wednesday': 3,
+    'Thursday': 4,
+    'Friday': 5,
+    'Saturday': 6,
+    'Sunday': 7,
 }
 
 
-def get_canteen_data(canteen_number: int) -> CanteenResult:
+def get_canteen_data(canteen_number: int, english: bool = False) -> CanteenResult:
     """Get information about canteen."""
-    base_url = 'https://www.studierendenwerk-hamburg.de/speiseplan/'
+    base_url = 'https://www.stwhh.de/speiseplan/'
+    if english:
+        base_url = 'https://www.stwhh.de/en/menu/'
 
     today_url = base_url
     today_plan = requests.get(today_url).text
@@ -33,12 +42,12 @@ def get_canteen_data(canteen_number: int) -> CanteenResult:
 
     servings = _parse_day_plan(today_plan, canteen_number) + _parse_day_plan(next_day_plan, canteen_number)
 
-    opening_times = _parse_opening_times(today_plan, canteen_number)
+    opening_times = _parse_opening_times(today_plan, canteen_number, english=english)
 
     return CanteenResult(opening_times, servings)
 
 
-def _parse_opening_times(plan: str, canteen_number: int) -> Dict[int, Tuple[time, time]]:
+def _parse_opening_times(plan: str, canteen_number: int, english: bool = False) -> Dict[int, Tuple[time, time]]:
     """Parse opening times from a plan."""
     parsed_plan = BeautifulSoup(plan, 'html.parser')
 
@@ -69,8 +78,12 @@ def _parse_opening_times(plan: str, canteen_number: int) -> Dict[int, Tuple[time
             # invalid data.
             continue
 
-        start_hour = datetime.strptime(start_time, '%H:%M').time()
-        end_hour = datetime.strptime(end_time, '%H:%M').time()
+        if english:
+            # TODO: Parse am/pm time
+            end_hour = start_hour = datetime.now().time()
+        else:
+            start_hour = datetime.strptime(start_time, '%H:%M').time()
+            end_hour = datetime.strptime(end_time, '%H:%M').time()
 
         day = first_day
         while day <= last_day:
@@ -108,9 +121,9 @@ def _parse_day_plan(plan: str, canteen_number: int) -> List[Serving]:
         price_staff = Decimal(0)
 
         for info in menu.find_all(attrs={'class': 'singlemeal__info'}):
-            if 'Studierende' in info.text:
+            if 'Studierende' in info.text or 'Students' in info.text:
                 price = _parse_price(info.text)
-            elif 'Bedienstete' in info.text:
+            elif 'Bedienstete' in info.text or 'Employees' in info.text:
                 price_staff = _parse_price(info.text)
 
         allergens = set(menu.attrs['data-allergens'].split())
@@ -135,7 +148,7 @@ def _parse_day_plan(plan: str, canteen_number: int) -> List[Serving]:
 
 def _parse_price(price: str) -> Decimal:
     """Parse a price from a string."""
-    price_pattern = re.compile(r'(\d+),(\d+)')
+    price_pattern = re.compile(r'(\d+)(?:[,\.])(\d+)')
     price = price_pattern.search(price)
     if price is not None:
         return Decimal('{}.{}'.format(price.group(1), price.group(2)))

@@ -32,28 +32,28 @@ SHORT_WEEKDAY_NAMES = {
 }
 
 
-def get_canteen_data() -> CanteenResult:
+def get_canteen_data(english: bool = False) -> CanteenResult:
     """Get information about canteen."""
-    url = 'https://desy.myalsterfood.de/de/'
+    url = f'https://desy.myalsterfood.de/{"en" if english else "de"}/'
 
     response = requests.get(url)
     response.encoding = response.apparent_encoding
     week_plan = response.text
 
-    servings = _parse_full_plan(week_plan)
-    opening_times = _parse_opening_times(week_plan)
+    servings = _parse_full_plan(week_plan, english=english)
+    opening_times = _parse_opening_times(week_plan, english=english)
 
     return CanteenResult(opening_times, servings)
 
 
-def _parse_opening_times(plan: str) -> Dict[int, Tuple[time, time]]:
+def _parse_opening_times(plan: str, english: bool = False) -> Dict[int, Tuple[time, time]]:
     """Parse opening times from a plan."""
     parsed_plan = BeautifulSoup(plan, 'html.parser')
 
     openings_div = parsed_plan.find('div', {'id': 'openings'})
     openings_strings = openings_div.find('p').strings
     for string in openings_strings:
-        if string == 'Kantine':
+        if string == ('Kantine' if not english else 'Canteen'):
             opening_string = next(openings_strings)
             break
     else:
@@ -63,7 +63,7 @@ def _parse_opening_times(plan: str) -> Dict[int, Tuple[time, time]]:
     return _extract_opening_times([opening_string])
 
 
-def _parse_full_plan(plan: str) -> List[Serving]:
+def _parse_full_plan(plan: str, english: bool = False) -> List[Serving]:
     """Parse the plan for all dates and all servings."""
     parsed_plan = BeautifulSoup(plan, 'html.parser')
 
@@ -75,7 +75,7 @@ def _parse_full_plan(plan: str) -> List[Serving]:
             plan_date = datetime.strptime(date_string, 'entry-%Y-%m-%d')
 
             items = day.find_all('table', {'class': 'entry'})
-            parsed_items =  [_parse_item(plan_date, item) for item in items]
+            parsed_items =  [_parse_item(plan_date, item, english=english) for item in items]
             servings += [item for item in parsed_items if item]
         except:
             continue
@@ -83,10 +83,10 @@ def _parse_full_plan(plan: str) -> List[Serving]:
     return servings
 
 
-FILTER_ITEMS = {'Tagessuppe', 'Preis per 100g'}
+FILTER_ITEMS = {'Tagessuppe mit Einlage', 'Preis per 100g', 'Soup of the day with extras'}
 
 
-def _parse_item(plan_date, item) -> Serving:
+def _parse_item(plan_date, item, english: bool = False) -> Serving:
     imgs = item.find_all('img', attrs={'class': 'category-icons'})
     srcs = [im.attrs['src'] for im in imgs if 'src' in im.attrs]
     is_vegetarian = any('icon-vegetarian' in src for src in srcs)
@@ -102,7 +102,7 @@ def _parse_item(plan_date, item) -> Serving:
         return None
 
     allergen_p = item.find(
-        lambda el: el.name == 'p' and 'Allergene' in el.text)
+        lambda el: el.name == 'p' and ('Allergene' in el.text or 'allergens' in el.text))
     if allergen_p:
         allergen_string = allergen_p.text
         allergen_pattern = re.compile(r'(\d+\.?\d?)\)')
@@ -116,7 +116,7 @@ def _parse_item(plan_date, item) -> Serving:
 
 def _parse_price(price: str) -> Decimal:
     """Parse a price from a string."""
-    price_pattern = re.compile(r'€ (\d+),(\d+)')
+    price_pattern = re.compile(r'€ (\d+)(?:[,\.])(\d+)')
     price = price_pattern.search(price)
     return Decimal('{}.{}'.format(price.group(1), price.group(2)))
 
